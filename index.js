@@ -9,11 +9,13 @@ app.use(express.json());
 const authRoutes = require("./routes/authRoutes");
 const exerciseRecordRoutes = require("./routes/exerciseRecordRoutes");
 const exerciseRoutes = require("./routes/exerciseRoutes");
+const programmeRoutes = require("./routes/programmeRoutes");
 
 // Mounting routes into app
 app.use("/auth", authRoutes);
 app.use("/exercise/records", exerciseRecordRoutes);
 app.use("/exercise", exerciseRoutes);
+app.use("/programmes", programmeRoutes);
 
 // Check that server has been started
 app.listen(PORT, () => {
