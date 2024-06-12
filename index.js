@@ -11,6 +11,7 @@ const exerciseRecordRoutes = require("./routes/exerciseRecordRoutes");
 const exerciseRoutes = require("./routes/exerciseRoutes");
 const programmeRoutes = require("./routes/programmeRoutes");
 const userProgrammeRoutes = require("./routes/userProgrammeRoutes");
+const userCalendarRoutes = require("./routes/userCalendarRoutes");
 
 // Mounting routes into app
 app.use("/auth", authRoutes);
@@ -18,6 +19,7 @@ app.use("/exercise/records", exerciseRecordRoutes);
 app.use("/exercise", exerciseRoutes);
 app.use("/programmes", programmeRoutes);
 app.use("/user/programmes", userProgrammeRoutes);
+app.use("/user/calendar", userCalendarRoutes);
 
 // Check that server has been started
 app.listen(PORT, () => {
