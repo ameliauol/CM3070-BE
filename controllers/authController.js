@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../database/db");
+const authenticateToken = require("../middleware/authenticateToken");
 
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -29,15 +30,10 @@ const loginUser = async (req, res) => {
       username,
     ]);
 
-    if (user.rows.length === 0) {
-      return res.status(400).json({ error: "Invalid username or password" });
-    }
-
-    const validPassword = await bcrypt.compare(
-      password,
-      user.rows[0].password_hash
-    );
-    if (!validPassword) {
+    if (
+      user.rows.length === 0 ||
+      !(await bcrypt.compare(password, user.rows[0].password_hash))
+    ) {
       return res.status(400).json({ error: "Invalid username or password" });
     }
 
@@ -86,8 +82,8 @@ const updateUserProfile = async (req, res) => {
 };
 
 module.exports = {
-  registerUser,
-  loginUser,
-  getUserProfile,
-  updateUserProfile,
+  registerUser: registerUser,
+  loginUser: loginUser,
+  getUserProfile: authenticateToken(getUserProfile),
+  updateUserProfile: authenticateToken(updateUserProfile),
 };
