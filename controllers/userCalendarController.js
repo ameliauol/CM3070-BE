@@ -1,11 +1,11 @@
-const pool = require("../database/db");
+const client = require("../db");
 
 // Get the user's weekly calendar with assigned programmes
 exports.getUserCalendar = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const userCalendar = await pool.query(
+    const userCalendar = await client.query(
       "SELECT * FROM user_calendar WHERE user_id = $1",
       [userId]
     );
@@ -23,7 +23,7 @@ exports.assignProgramme = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const newUserCalendarEntry = await pool.query(
+    const newUserCalendarEntry = await client.query(
       "INSERT INTO user_calendar (user_id, programme_id, date) VALUES ($1, $2, $3) RETURNING *",
       [userId, programme_id, date]
     );
@@ -45,7 +45,7 @@ exports.updateCalendarEntry = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const updatedCalendarEntry = await pool.query(
+    const updatedCalendarEntry = await client.query(
       "UPDATE user_calendar SET programme_id = $1, date = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 AND user_id = $4 RETURNING *",
       [programme_id, date, calendarEntryId, userId]
     );
@@ -66,7 +66,7 @@ exports.deleteCalendarEntry = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const deletedCalendarEntry = await pool.query(
+    const deletedCalendarEntry = await client.query(
       "DELETE FROM user_calendar WHERE id = $1 AND user_id = $2 RETURNING *",
       [calendarEntryId, userId]
     );

@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const pool = require("../database/db");
+const client = require("../db");
 const authenticateToken = require("../middleware/authenticateToken");
 
 const registerUser = async (req, res) => {
@@ -10,7 +10,7 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await pool.query(
+    const newUser = await client.query(
       "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, created_at, updated_at",
       [username, email, hashedPassword]
     );
@@ -26,7 +26,7 @@ const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await pool.query("SELECT * FROM users WHERE username = $1", [
+    const user = await client.query("SELECT * FROM users WHERE username = $1", [
       username,
     ]);
 
@@ -52,7 +52,7 @@ const getUserProfile = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const userProfile = await pool.query(
+    const userProfile = await client.query(
       "SELECT id, username, email, name, created_at, updated_at FROM users WHERE id = $1",
       [userId]
     );
@@ -69,7 +69,7 @@ const updateUserProfile = async (req, res) => {
   const { name, email } = req.body;
 
   try {
-    const updatedUser = await pool.query(
+    const updatedUser = await client.query(
       "UPDATE users SET name = $1, email = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING id, username, email, created_at, updated_at",
       [name, email, userId]
     );
@@ -82,8 +82,8 @@ const updateUserProfile = async (req, res) => {
 };
 
 module.exports = {
-  registerUser: registerUser,
-  loginUser: loginUser,
+  registerUser,
+  loginUser,
   getUserProfile: authenticateToken(getUserProfile),
   updateUserProfile: authenticateToken(updateUserProfile),
 };

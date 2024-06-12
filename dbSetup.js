@@ -1,6 +1,6 @@
-const pool = require("./db");
+const client = require("./db");
 
-pool.query(
+client.query(
   `
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -49,11 +49,8 @@ pool.query(
     days_per_week INTEGER,
     active_days VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT max_active_programmes CHECK (
-      (SELECT COUNT(*) FROM user_programmes WHERE user_id = user_programmes.user_id AND status = 'active') <= 3
-    )
-  );
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
   CREATE TABLE IF NOT EXISTS user_exercises (
     id SERIAL PRIMARY KEY,
@@ -88,6 +85,6 @@ pool.query(
     } else {
       console.log("Tables created successfully");
     }
-    pool.end();
+    client.end();
   }
 );

@@ -1,11 +1,11 @@
-const pool = require("../database/db");
+const client = require("../db");
 
 // Get user's programmes
 exports.getUserProgrammes = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const userProgrammes = await pool.query(
+    const userProgrammes = await client.query(
       "SELECT * FROM user_programmes WHERE user_id = $1",
       [userId]
     );
@@ -24,7 +24,7 @@ exports.startNewProgramme = async (req, res) => {
 
   try {
     // Check if user has reached the limit of active programmes
-    const activeProgrammesCount = await pool.query(
+    const activeProgrammesCount = await client.query(
       "SELECT COUNT(*) FROM user_programmes WHERE user_id = $1 AND status = $2",
       [userId, "active"]
     );
@@ -35,7 +35,7 @@ exports.startNewProgramme = async (req, res) => {
         .json({ error: "User already has 3 active programmes" });
     }
 
-    const newUserProgramme = await pool.query(
+    const newUserProgramme = await client.query(
       "INSERT INTO user_programmes (user_id, programme_id, start_date, status, days_per_week, active_days) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [userId, programme_id, start_date, "active", days_per_week, active_days]
     );
@@ -52,7 +52,7 @@ exports.getUserProgrammeById = async (req, res) => {
   const programmeId = req.params.id;
 
   try {
-    const userProgramme = await pool.query(
+    const userProgramme = await client.query(
       "SELECT * FROM user_programmes WHERE id = $1",
       [programmeId]
     );
@@ -73,7 +73,7 @@ exports.deleteUserProgramme = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const deletedProgramme = await pool.query(
+    const deletedProgramme = await client.query(
       "DELETE FROM user_programmes WHERE id = $1 AND user_id = $2 RETURNING *",
       [programmeId, userId]
     );
@@ -94,7 +94,7 @@ exports.getUserSpecificExerciseDetails = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const userExercises = await pool.query(
+    const userExercises = await client.query(
       "SELECT * FROM user_exercises ue INNER JOIN user_programmes up ON ue.user_programme_id = up.id WHERE up.user_id = $1 AND up.id = $2",
       [userId, programmeId]
     );
@@ -114,7 +114,7 @@ exports.updateCurrentWeight = async (req, res) => {
   const { current_weight } = req.body;
 
   try {
-    const updatedExercise = await pool.query(
+    const updatedExercise = await client.query(
       "UPDATE user_exercises SET current_weight = $1, updated_at = CURRENT_TIMESTAMP WHERE user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $2 AND id = $3) AND exercise_id = $4 RETURNING *",
       [current_weight, userId, programmeId, exerciseId]
     );
@@ -139,7 +139,7 @@ exports.addExerciseRecord = async (req, res) => {
   const { weight } = req.body;
 
   try {
-    const newRecord = await pool.query(
+    const newRecord = await client.query(
       "INSERT INTO exercise_records (user_exercise_id, weight, date_achieved) VALUES ((SELECT id FROM user_exercises WHERE user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $1 AND id = $2) AND exercise_id = $3), $4, CURRENT_DATE) RETURNING *",
       [userId, programmeId, exerciseId, weight]
     );

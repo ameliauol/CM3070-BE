@@ -1,9 +1,9 @@
-const pool = require("../db");
+const client = require("../db");
 
 // Get all exercises
 exports.getAllExercises = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM exercises");
+    const result = await client.query("SELECT * FROM exercises");
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching exercises:", error);
@@ -15,7 +15,7 @@ exports.getAllExercises = async (req, res) => {
 exports.createExercise = async (req, res) => {
   const { name, category, description } = req.body;
   try {
-    const result = await pool.query(
+    const result = await client.query(
       "INSERT INTO exercises (name, category, description) VALUES ($1, $2, $3) RETURNING *",
       [name, category, description]
     );

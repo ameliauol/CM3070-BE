@@ -1,14 +1,12 @@
-const mysql = require("mysql2");
+const { Client } = require("pg");
 
-// Create a connection pool
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "your_username",
-  password: "your_password",
-  database: "your_database",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+const connectionString = process.env.DATABASE_URL;
+
+const client = new Client({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-module.exports = pool;
+module.exports = client;

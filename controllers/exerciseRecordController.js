@@ -1,4 +1,4 @@
-const pool = require("../db");
+const client = require("../db");
 
 // Get all records for a specific user exercise
 exports.getAllRecords = async (req, res) => {
@@ -6,7 +6,7 @@ exports.getAllRecords = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const exerciseRecords = await pool.query(
+    const exerciseRecords = await client.query(
       "SELECT * FROM exercise_records WHERE user_exercise_id IN (SELECT id FROM user_exercises WHERE user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $1) AND exercise_id = $2)",
       [userId, exerciseId]
     );
@@ -28,7 +28,7 @@ exports.addNewRecord = async (req, res) => {
   const { weight } = req.body;
 
   try {
-    const newRecord = await pool.query(
+    const newRecord = await client.query(
       "INSERT INTO exercise_records (user_exercise_id, weight, date_achieved) VALUES ((SELECT id FROM user_exercises WHERE user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $1) AND exercise_id = $2), $3, CURRENT_DATE) RETURNING *",
       [userId, exerciseId, weight]
     );
@@ -49,7 +49,7 @@ exports.deleteRecord = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const deletedRecord = await pool.query(
+    const deletedRecord = await client.query(
       "DELETE FROM exercise_records WHERE id = $1 AND user_exercise_id IN (SELECT id FROM user_exercises WHERE user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $2)) RETURNING *",
       [recordId, userId]
     );

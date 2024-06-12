@@ -1,9 +1,9 @@
-const pool = require("../database/db");
+const client = require("../db");
 
 // Get all available programmes
 exports.getAllProgrammes = async (req, res) => {
   try {
-    const programmes = await pool.query("SELECT * FROM available_programmes");
+    const programmes = await client.query("SELECT * FROM available_programmes");
     res.json(programmes.rows);
   } catch (error) {
     console.error("Error fetching available programmes:", error);
@@ -16,7 +16,7 @@ exports.getProgrammeById = async (req, res) => {
   const programmeId = req.params.id;
 
   try {
-    const programme = await pool.query(
+    const programme = await client.query(
       "SELECT * FROM available_programmes WHERE id = $1",
       [programmeId]
     );
@@ -36,7 +36,7 @@ exports.createProgramme = async (req, res) => {
   const createdByUserId = req.user.id;
 
   try {
-    const newProgramme = await pool.query(
+    const newProgramme = await client.query(
       "INSERT INTO available_programmes (name, description, created_by_user_id) VALUES ($1, $2, $3) RETURNING *",
       [name, description, createdByUserId]
     );
