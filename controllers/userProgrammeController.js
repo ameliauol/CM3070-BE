@@ -1,4 +1,4 @@
-const client = require("../db");
+const { client } = require("../db");
 
 // Get user's programmes
 exports.getUserProgrammes = async (req, res) => {

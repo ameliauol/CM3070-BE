@@ -1,4 +1,4 @@
-const client = require("../db");
+const { client } = require("../db");
 
 // Get all available programmes
 exports.getAllProgrammes = async (req, res) => {

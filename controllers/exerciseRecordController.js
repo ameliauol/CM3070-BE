@@ -1,4 +1,4 @@
-const client = require("../db");
+const { client } = require("../db");
 
 // Get all records for a specific user exercise
 exports.getAllRecords = async (req, res) => {

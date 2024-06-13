@@ -1,22 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const calendarController = require("../controllers/calendarController");
+const userCalendarController = require("../controllers/userCalendarController");
 const authenticateToken = require("../middleware/authenticateToken");
 
 // Get the user's weekly calendar with assigned programmes
-router.get("/", authenticateToken, calendarController.getUserCalendar);
+router.get("/", authenticateToken, userCalendarController.getUserCalendar);
 
 // Assign a programme to a specific day on the calendar
-router.post("/", authenticateToken, calendarController.assignProgramme);
+router.post("/", authenticateToken, userCalendarController.assignProgramme);
 
 // Update a specific calendar entry
-router.put("/:id", authenticateToken, calendarController.updateCalendarEntry);
+router.put(
+  "/:id",
+  authenticateToken,
+  userCalendarController.updateCalendarEntry
+);
 
 // Delete a specific calendar entry
 router.delete(
   "/:id",
   authenticateToken,
-  calendarController.deleteCalendarEntry
+  userCalendarController.deleteCalendarEntry
 );
 
 module.exports = router;

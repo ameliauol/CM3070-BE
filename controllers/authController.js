@@ -1,11 +1,28 @@
+// controllers/authController.js
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const client = require("../db");
-const authenticateToken = require("../middleware/authenticateToken");
+const { client } = require("../db");
 
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  // Connect to the database and log the status
+  async () => {
+    try {
+      await client.connect();
+      console.log("Database connection successful!");
 
+      // Run a simple test query
+      const res = await client.query("SELECT NOW()");
+      console.log("Current Time from DB:", res.rows[0].now);
+
+      // Optionally disconnect
+      await client.end();
+      console.log("Database connection closed successfully!");
+    } catch (err) {
+      console.error("Database connection error:", err);
+    }
+  };
+
+  const { username, email, password } = req.body;
   try {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -24,7 +41,6 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
-
   try {
     const user = await client.query("SELECT * FROM users WHERE username = $1", [
       username,
@@ -50,7 +66,6 @@ const loginUser = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   const userId = req.user.id;
-
   try {
     const userProfile = await client.query(
       "SELECT id, username, email, name, created_at, updated_at FROM users WHERE id = $1",
@@ -67,7 +82,6 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   const userId = req.user.id;
   const { name, email } = req.body;
-
   try {
     const updatedUser = await client.query(
       "UPDATE users SET name = $1, email = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING id, username, email, created_at, updated_at",
@@ -84,6 +98,6 @@ const updateUserProfile = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile: authenticateToken(getUserProfile),
-  updateUserProfile: authenticateToken(updateUserProfile),
+  getUserProfile,
+  updateUserProfile,
 };

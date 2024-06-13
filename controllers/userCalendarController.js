@@ -1,4 +1,4 @@
-const client = require("../db");
+const { client } = require("../db");
 
 // Get the user's weekly calendar with assigned programmes
 exports.getUserCalendar = async (req, res) => {
