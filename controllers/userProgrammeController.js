@@ -23,6 +23,19 @@ exports.startNewProgramme = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // Fetch the programme to ensure it exists
+    const programme = await client.query(
+      "SELECT * FROM available_programmes WHERE id = $1",
+      [programme_id]
+    );
+
+    if (programme.rows.length === 0) {
+      return res.status(404).json({ error: "Programme not found" });
+    }
+
+    // Log the found programme details
+    console.log("Found programme:", programme.rows[0]);
+
     // Check if user has reached the limit of active programmes
     const activeProgrammesCount = await client.query(
       "SELECT COUNT(*) FROM user_programmes WHERE user_id = $1 AND status = $2",
