@@ -1,82 +1,32 @@
 const { client } = require("../db");
 
-// Get the user's weekly calendar with assigned programmes
-exports.getUserCalendar = async (req, res) => {
-  const userId = req.user.id;
-
+// Get all calendar entries for a user
+exports.getAllCalendarEntriesForUser = async (req, res) => {
+  const userId = req.params.id;
   try {
-    const userCalendar = await client.query(
+    const calendarEntries = await client.query(
       "SELECT * FROM user_calendar WHERE user_id = $1",
       [userId]
     );
-
-    res.json(userCalendar.rows);
+    res.json(calendarEntries.rows);
   } catch (error) {
-    console.error("Error fetching the user's weekly calendar:", error);
+    console.error("Error fetching calendar entries for user:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// Assign a programme to a specific day on the calendar
-exports.assignProgramme = async (req, res) => {
-  const { programme_id, date } = req.body;
-  const userId = req.user.id;
-
+// Add a new calendar entry for a user
+exports.addCalendarEntryForUser = async (req, res) => {
+  const userId = req.params.id;
+  const { date, programme_id } = req.body;
   try {
-    const newUserCalendarEntry = await client.query(
-      "INSERT INTO user_calendar (user_id, programme_id, date) VALUES ($1, $2, $3) RETURNING *",
-      [userId, programme_id, date]
+    const newCalendarEntry = await client.query(
+      "INSERT INTO user_calendar (user_id, date, programme_id) VALUES ($1, $2, $3) RETURNING *",
+      [userId, date, programme_id]
     );
-
-    res.status(201).json(newUserCalendarEntry.rows[0]);
+    res.status(201).json(newCalendarEntry.rows[0]);
   } catch (error) {
-    console.error(
-      "Error assigning a programme to a specific day on the calendar:",
-      error
-    );
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-// Update a specific calendar entry
-exports.updateCalendarEntry = async (req, res) => {
-  const calendarEntryId = req.params.id;
-  const { programme_id, date } = req.body;
-  const userId = req.user.id;
-
-  try {
-    const updatedCalendarEntry = await client.query(
-      "UPDATE user_calendar SET programme_id = $1, date = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 AND user_id = $4 RETURNING *",
-      [programme_id, date, calendarEntryId, userId]
-    );
-
-    if (updatedCalendarEntry.rows.length === 0) {
-      return res.status(404).json({ error: "Calendar entry not found" });
-    }
-    res.json(updatedCalendarEntry.rows[0]);
-  } catch (error) {
-    console.error("Error updating a specific calendar entry:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-// Delete a specific calendar entry
-exports.deleteCalendarEntry = async (req, res) => {
-  const calendarEntryId = req.params.id;
-  const userId = req.user.id;
-
-  try {
-    const deletedCalendarEntry = await client.query(
-      "DELETE FROM user_calendar WHERE id = $1 AND user_id = $2 RETURNING *",
-      [calendarEntryId, userId]
-    );
-
-    if (deletedCalendarEntry.rows.length === 0) {
-      return res.status(404).json({ error: "Calendar entry not found" });
-    }
-    res.json(deletedCalendarEntry.rows[0]);
-  } catch (error) {
-    console.error("Error deleting a specific calendar entry:", error);
+    console.error("Error adding calendar entry for user:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
