@@ -7,20 +7,27 @@ const { client, connectClient } = require("./db");
 // Middleware
 app.use(express.json());
 
-// Routes
-const authRoutes = require("./routes/authRoutes");
-const exerciseRecordRoutes = require("./routes/exerciseRecordRoutes");
-const exerciseRoutes = require("./routes/exerciseRoutes");
-const programmeRoutes = require("./routes/programmeRoutes");
-const userProgrammeRoutes = require("./routes/userProgrammeRoutes");
+// Import routes
+const usersRoutes = require("./routes/usersRoutes");
+const availableProgrammesRoutes = require("./routes/availableProgrammesRoutes");
+const exercisesRoutes = require("./routes/exercisesRoutes");
+const exerciseInstructionsRoutes = require("./routes/exerciseInstructionsRoutes");
+const programmeExercisesRoutes = require("./routes/programmeExercisesRoutes");
+const userProgrammesRoutes = require("./routes/userProgrammesRoutes");
+const userExercisesRoutes = require("./routes/userExercisesRoutes");
+const exercisesRecordsRoutes = require("./routes/exercisesRecordsRoutes");
 const userCalendarRoutes = require("./routes/userCalendarRoutes");
 
-// Mounting routes into app
-app.use("/auth", authRoutes);
-app.use("/exercise", [exerciseRecordRoutes, exerciseRoutes]);
-app.use("/programmes", programmeRoutes);
-app.use("/user/programmes", userProgrammeRoutes);
-app.use("/user/calendar", userCalendarRoutes);
+// Use routes
+app.use("/api", usersRoutes);
+app.use("/api", availableProgrammesRoutes);
+app.use("/api", exercisesRoutes);
+app.use("/api", exerciseInstructionsRoutes);
+app.use("/api", programmeExercisesRoutes);
+app.use("/api", userProgrammesRoutes);
+app.use("/api", userExercisesRoutes);
+app.use("/api", exercisesRecordsRoutes);
+app.use("/api", userCalendarRoutes);
 
 // Connect to the database and start the server
 (async () => {
@@ -28,7 +35,7 @@ app.use("/user/calendar", userCalendarRoutes);
     await connectClient();
 
     // Run a simple test query to verify connection
-    const res = await client.query("SELECT NOW()");
+    const res = await client.query(`SELECT NOW() as now`);
     console.log("Current Time from DB:", res.rows[0].now);
 
     // Start the server after successful DB connection
