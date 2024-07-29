@@ -1,22 +1,20 @@
 const { client } = require("../db");
-
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Function to register a new user
 exports.registerUser = async (req, res) => {
-  const { username, email, password, name } = req.body;
+  let { username, email, password, name } = req.body;
 
   if (!username || !email || !password || !name) {
-    res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
-    // Hash the password
+    username = username.toLowerCase();
+
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Insert new user into the database
     const newUser = await client.query(
       "INSERT INTO users (username, email, password_hash, name) VALUES ($1, $2, $3, $4) RETURNING *",
       [username, email, hashedPassword, name]
@@ -29,21 +27,21 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// Function to login a user
 exports.loginUser = async (req, res) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
 
   try {
-    // Check if the user exists
-    const user = await client.query("SELECT * FROM users WHERE username = $1", [
-      username,
-    ]);
+    username = username.toLowerCase();
+
+    const user = await client.query(
+      "SELECT * FROM users WHERE LOWER(username) = $1",
+      [username]
+    );
 
     if (user.rows.length === 0) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Compare passwords
     const passwordMatch = await bcrypt.compare(
       password,
       user.rows[0].password_hash
@@ -52,11 +50,10 @@ exports.loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: user.rows[0].id, username: user.rows[0].username },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" } // Adjust token expiration as needed
+      { expiresIn: "1h" }
     );
 
     res.json({ token });
@@ -66,7 +63,6 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// Get all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await client.query(
@@ -79,12 +75,10 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Get user by username
 exports.getUserByUsername = async (req, res) => {
-  const username = req.params.username;
+  const username = req.params.username.toLowerCase();
 
-  // Verify that the username in the token matches the username in the request
-  if (req.user.username !== username) {
+  if (req.user.username.toLowerCase() !== username) {
     return res
       .status(403)
       .json({ error: "You can only fetch your own account" });
@@ -92,7 +86,7 @@ exports.getUserByUsername = async (req, res) => {
 
   try {
     const user = await client.query(
-      "SELECT id, username, email, name, created_at, updated_at FROM users WHERE username = $1",
+      "SELECT id, username, email, name, created_at, updated_at FROM users WHERE LOWER(username) = $1",
       [username]
     );
 
@@ -107,28 +101,24 @@ exports.getUserByUsername = async (req, res) => {
   }
 };
 
-// Update user by current username
 exports.updateUserByUsername = async (req, res) => {
-  const currUsername = req.params.currUsername;
-  const { username, email, name, password } = req.body;
+  const currUsername = req.params.currUsername.toLowerCase();
+  let { username, email, name, password } = req.body;
 
-  // Verify that the current user's username in the token matches the username in the request
-  if (req.user.username !== currUsername) {
+  if (req.user.username.toLowerCase() !== currUsername) {
     return res
       .status(403)
       .json({ error: "You can only update your own account" });
   }
 
   try {
-    // Prepare the fields to be updated
     const fields = [];
     const values = [];
-    let index = 1; // Parameter index for SQL query
+    let index = 1;
 
-    // Add fields dynamically based on the request body
     if (username) {
       fields.push(`username = $${index++}`);
-      values.push(username);
+      values.push(username.toLowerCase());
     }
 
     if (email) {
@@ -142,7 +132,6 @@ exports.updateUserByUsername = async (req, res) => {
     }
 
     if (password) {
-      // Hash the new password
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -154,14 +143,12 @@ exports.updateUserByUsername = async (req, res) => {
       return res.status(400).json({ error: "No fields to update" });
     }
 
-    // Add the current username as the last parameter for the WHERE clause
     values.push(currUsername);
 
-    // Update the user in the database
     const updatedUser = await client.query(
       `UPDATE users SET ${fields.join(
         ", "
-      )}, updated_at = CURRENT_TIMESTAMP WHERE username = $${index} RETURNING id, username, email, name, created_at, updated_at`,
+      )}, updated_at = CURRENT_TIMESTAMP WHERE LOWER(username) = $${index} RETURNING id, username, email, name, created_at, updated_at`,
       values
     );
 
@@ -176,12 +163,10 @@ exports.updateUserByUsername = async (req, res) => {
   }
 };
 
-// Delete user by username
 exports.deleteUserByUsername = async (req, res) => {
-  const username = req.params.username;
+  const username = req.params.username.toLowerCase();
 
-  // Verify that the user ID in the token matches the ID in the request
-  if (req.user.username !== username) {
+  if (req.user.username.toLowerCase() !== username) {
     return res
       .status(403)
       .json({ error: "You can only delete your own account" });
@@ -189,7 +174,7 @@ exports.deleteUserByUsername = async (req, res) => {
 
   try {
     const deletedUser = await client.query(
-      "DELETE FROM users WHERE username = $1 RETURNING username",
+      "DELETE FROM users WHERE LOWER(username) = $1 RETURNING username",
       [username]
     );
 
