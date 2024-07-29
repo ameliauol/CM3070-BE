@@ -13,11 +13,33 @@ exports.getAllExercises = async (req, res) => {
 
 // Create a new exercise
 exports.createExercise = async (req, res) => {
-  const { name, category, description, goal_weight } = req.body;
+  const { name, category, description } = req.body;
+
+  if (!name || !category || !description) {
+    res
+      .status(400)
+      .json({ error: "Name, category, and description are required" });
+  }
+
+  if (
+    ![
+      "chest",
+      "back",
+      "arms",
+      "legs",
+      "core",
+      "full body",
+      "shoulders",
+      "others",
+      "cardio",
+    ].includes(category.toLowerCase())
+  ) {
+    res.status(400).json({ error: "Invalid category" });
+  }
   try {
     const newExercise = await client.query(
-      "INSERT INTO exercises (name, category, description, goal_weight) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, category, description, goal_weight]
+      "INSERT INTO exercises (name, category, description) VALUES ($1, $2, $3) RETURNING *",
+      [name, category.toLowerCase(), description]
     );
     res.status(201).json(newExercise.rows[0]);
   } catch (error) {

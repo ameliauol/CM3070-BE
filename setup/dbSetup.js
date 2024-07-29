@@ -113,7 +113,6 @@ CREATE TABLE IF NOT EXISTS exercises (
   name VARCHAR(255) NOT NULL,
   category VARCHAR(255) NOT NULL,
   description TEXT,
-  goal_weight FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT chk_category CHECK (category IN ('chest', 'back', 'arms', 'legs', 'core', 'full body', 'shoulders', 'others', 'cardio'))
