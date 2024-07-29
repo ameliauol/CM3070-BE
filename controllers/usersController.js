@@ -110,9 +110,9 @@ exports.getUserByUsername = async (req, res) => {
 // Update user by current username
 exports.updateUserByUsername = async (req, res) => {
   const currUsername = req.params.currUsername;
-  const { username, email, name } = req.body;
+  const { username, email, name, password } = req.body;
 
-  // Verify that the current user username in the token matches the username in the request
+  // Verify that the current user's username in the token matches the username in the request
   if (req.user.username !== currUsername) {
     return res
       .status(403)
@@ -120,9 +120,49 @@ exports.updateUserByUsername = async (req, res) => {
   }
 
   try {
+    // Prepare the fields to be updated
+    const fields = [];
+    const values = [];
+    let index = 1; // Parameter index for SQL query
+
+    // Add fields dynamically based on the request body
+    if (username) {
+      fields.push(`username = $${index++}`);
+      values.push(username);
+    }
+
+    if (email) {
+      fields.push(`email = $${index++}`);
+      values.push(email);
+    }
+
+    if (name) {
+      fields.push(`name = $${index++}`);
+      values.push(name);
+    }
+
+    if (password) {
+      // Hash the new password
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      fields.push(`password_hash = $${index++}`);
+      values.push(hashedPassword);
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ error: "No fields to update" });
+    }
+
+    // Add the current username as the last parameter for the WHERE clause
+    values.push(currUsername);
+
+    // Update the user in the database
     const updatedUser = await client.query(
-      "UPDATE users SET username = $1, email = $2, name = $3, updated_at = CURRENT_TIMESTAMP WHERE username = $4 RETURNING id, username, email, name, created_at, updated_at",
-      [username, email, name, currUsername]
+      `UPDATE users SET ${fields.join(
+        ", "
+      )}, updated_at = CURRENT_TIMESTAMP WHERE username = $${index} RETURNING id, username, email, name, created_at, updated_at`,
+      values
     );
 
     if (updatedUser.rows.length === 0) {
