@@ -5,7 +5,11 @@ exports.authenticateToken = (req, res, next) => {
 
   const authHeader = req.headers["authorization"];
   if (!authHeader) {
-    return res.status(401).json({ error: "No token provided" });
+    return res
+      .status(401)
+      .json({
+        error: "No token provided, you must be logged in to make this request",
+      });
   }
 
   const tokenParts = authHeader.split(" ");
