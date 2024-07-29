@@ -2,17 +2,16 @@ const express = require("express");
 const router = express.Router();
 const exerciseInstructionsController = require("../controllers/exerciseInstructionsController");
 
-// Routes related to exercise instructions
 router.get(
-  "/exercise_instructions",
+  "/get/all",
   exerciseInstructionsController.getAllExerciseInstructions
 );
 router.get(
-  "/exercise_instructions/:exercise_id",
+  "/get/id/:exercise_id",
   exerciseInstructionsController.getExerciseInstructionsByExerciseId
 );
 router.post(
-  "/exercise_instructions",
+  "/create",
   exerciseInstructionsController.createExerciseInstruction
 );
 

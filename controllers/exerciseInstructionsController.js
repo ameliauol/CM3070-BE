@@ -46,9 +46,8 @@ const getExerciseInstructionsByExerciseId = async (req, res) => {
   }
 };
 
-// Create a new exercise instruction
 const createExerciseInstruction = async (req, res) => {
-  const { exercise_id, step_number, instruction } = req.body;
+  const { exercise_id, instruction } = req.body;
 
   try {
     // Check if the exercise exists
@@ -60,14 +59,22 @@ const createExerciseInstruction = async (req, res) => {
       return res.status(404).json({ message: "Exercise not found." });
     }
 
-    // Insert the new exercise instruction
+    // Get the current maximum step_number for the given exercise_id
+    const maxStepNumberResult = await client.query(
+      "SELECT COALESCE(MAX(step_number), 0) AS max_step_number FROM exercise_instructions WHERE exercise_id = $1",
+      [exercise_id]
+    );
+    const maxStepNumber = parseInt(maxStepNumberResult.rows[0].max_step_number);
+    const nextStepNumber = maxStepNumber + 1;
+
+    // Insert the new exercise instruction with the calculated step_number
     const { rows } = await client.query(
       `
       INSERT INTO exercise_instructions (exercise_id, step_number, instruction, created_at, updated_at)
       VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       RETURNING *;
       `,
-      [exercise_id, step_number, instruction]
+      [exercise_id, nextStepNumber, instruction]
     );
 
     res.status(201).json(rows[0]);
