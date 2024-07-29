@@ -19,13 +19,13 @@ const exercisesRecordsRoutes = require("./routes/exercisesRecordsRoutes");
 const userCalendarRoutes = require("./routes/userCalendarRoutes");
 
 // Use routes
+app.use("/users", usersRoutes);
 app.use("/programme/exercises", programmeExercisesRoutes);
 app.use("/user/programmes", userProgrammesRoutes);
 app.use("/user/exercises", userExercisesRoutes);
 app.use("/exercises/record", exercisesRecordsRoutes);
 app.use("/user/calendar", userCalendarRoutes);
 app.use("/exercise/instructions", exerciseInstructionsRoutes);
-app.use("/users", usersRoutes);
 app.use("/available-programmes", availableProgrammesRoutes);
 app.use("/exercises", exercisesRoutes);
 

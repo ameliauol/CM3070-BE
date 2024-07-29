@@ -7,6 +7,10 @@ const jwt = require("jsonwebtoken");
 exports.registerUser = async (req, res) => {
   const { username, email, password, name } = req.body;
 
+  if (!username || !email || !password || !name) {
+    res.status(400).json({ error: "All fields are required" });
+  }
+
   try {
     // Hash the password
     const salt = await bcrypt.genSalt();
@@ -75,14 +79,21 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Get user by ID
-exports.getUserById = async (req, res) => {
-  const userId = req.params.id;
+// Get user by username
+exports.getUserByUsername = async (req, res) => {
+  const username = req.params.username;
+
+  // Verify that the username in the token matches the username in the request
+  if (req.user.username !== username) {
+    return res
+      .status(403)
+      .json({ error: "You can only fetch your own account" });
+  }
 
   try {
     const user = await client.query(
-      "SELECT id, username, email, name, created_at, updated_at FROM users WHERE id = $1",
-      [userId]
+      "SELECT id, username, email, name, created_at, updated_at FROM users WHERE username = $1",
+      [username]
     );
 
     if (user.rows.length === 0) {
@@ -96,13 +107,13 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Update user by ID
-exports.updateUserById = async (req, res) => {
-  const userId = req.params.id;
+// Update user by current username
+exports.updateUserByUsername = async (req, res) => {
+  const currUsername = req.params.currUsername;
   const { username, email, name } = req.body;
 
-  // Verify that the user ID in the token matches the ID in the request
-  if (req.user.id !== userId) {
+  // Verify that the current user username in the token matches the username in the request
+  if (req.user.username !== currUsername) {
     return res
       .status(403)
       .json({ error: "You can only update your own account" });
@@ -110,8 +121,8 @@ exports.updateUserById = async (req, res) => {
 
   try {
     const updatedUser = await client.query(
-      "UPDATE users SET username = $1, email = $2, name = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING id, username, email, name, created_at, updated_at",
-      [username, email, name, userId]
+      "UPDATE users SET username = $1, email = $2, name = $3, updated_at = CURRENT_TIMESTAMP WHERE username = $4 RETURNING id, username, email, name, created_at, updated_at",
+      [username, email, name, currUsername]
     );
 
     if (updatedUser.rows.length === 0) {
@@ -125,12 +136,12 @@ exports.updateUserById = async (req, res) => {
   }
 };
 
-// Delete user by ID
-exports.deleteUserById = async (req, res) => {
-  const userId = req.params.id;
+// Delete user by username
+exports.deleteUserByUsername = async (req, res) => {
+  const username = req.params.username;
 
   // Verify that the user ID in the token matches the ID in the request
-  if (req.user.id !== userId) {
+  if (req.user.username !== username) {
     return res
       .status(403)
       .json({ error: "You can only delete your own account" });
@@ -138,8 +149,8 @@ exports.deleteUserById = async (req, res) => {
 
   try {
     const deletedUser = await client.query(
-      "DELETE FROM users WHERE id = $1 RETURNING id",
-      [userId]
+      "DELETE FROM users WHERE username = $1 RETURNING username",
+      [username]
     );
 
     if (deletedUser.rows.length === 0) {
