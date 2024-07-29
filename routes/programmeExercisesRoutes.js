@@ -3,7 +3,10 @@ const router = express.Router();
 const programmeExercisesController = require("../controllers/programmeExercisesController");
 
 // Routes related to programme exercises
-router.get("/get/all", programmeExercisesController.getAllExercisesInProgramme);
-router.post("/create", programmeExercisesController.createProgrammeExercise);
+router.get(
+  "/get/id/:id",
+  programmeExercisesController.getAllExercisesOfProgrammeId
+);
+router.post("/add/id/:id", programmeExercisesController.addExerciseToProgramme);
 
 module.exports = router;
