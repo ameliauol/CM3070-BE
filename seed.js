@@ -26,7 +26,6 @@ const seedDatabase = async () => {
     const usersResult = await client.query(usersQuery);
     const users = usersResult.rows;
     const userIds = users.map((user) => user.id);
-    const userNames = users.map((user) => user.username);
 
     // Insert Available Programmes
     const programmesQuery = `
@@ -41,10 +40,10 @@ const seedDatabase = async () => {
 
     // Insert Exercises
     const exercisesQuery = `
-      INSERT INTO exercises (name, category, description, goal_weight)
+      INSERT INTO exercises (name, category, description)
       VALUES
-        ('Push Up', 'arms', 'An exercise to strengthen arms', 50),
-        ('Squat', 'legs', 'An exercise to strengthen legs', 100)
+        ('Push Up', 'arms', 'An exercise to strengthen arms'),
+        ('Squat', 'legs', 'An exercise to strengthen legs')
       RETURNING id;
     `;
     const exercisesResult = await client.query(exercisesQuery);
@@ -84,13 +83,13 @@ const seedDatabase = async () => {
     const userProgrammesResult = await client.query(userProgrammesQuery);
     const userProgrammeIds = userProgrammesResult.rows.map((row) => row.id);
 
-    // Insert User Exercises
+    // Insert User Exercises with Goal Weight
     const userExercisesQuery = `
-      INSERT INTO user_exercises (user_programme_id, exercise_id, current_weight)
+      INSERT INTO user_exercises (user_programme_id, exercise_id, current_weight, goal_weight)
       VALUES
-        (${userProgrammeIds[0]}, ${exerciseIds[0]}, 20),
-        (${userProgrammeIds[0]}, ${exerciseIds[1]}, 50),
-        (${userProgrammeIds[1]}, ${exerciseIds[0]}, 30)
+        (${userProgrammeIds[0]}, ${exerciseIds[0]}, 20, 50),
+        (${userProgrammeIds[0]}, ${exerciseIds[1]}, 50, 100),
+        (${userProgrammeIds[1]}, ${exerciseIds[0]}, 30, 60)
       RETURNING id;
     `;
     const userExercisesResult = await client.query(userExercisesQuery);

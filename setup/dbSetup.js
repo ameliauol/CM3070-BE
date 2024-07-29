@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS exercises (
   name VARCHAR(255) NOT NULL,
   category VARCHAR(255) NOT NULL,
   description TEXT,
-  goal_weight FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT chk_category CHECK (category IN ('chest', 'back', 'arms', 'legs', 'core', 'full body', 'shoulders', 'others', 'cardio'))
@@ -73,6 +72,7 @@ CREATE TABLE IF NOT EXISTS user_exercises (
   user_programme_id INTEGER REFERENCES user_programmes(id) ON DELETE CASCADE,
   exercise_id INTEGER REFERENCES exercises(id),
   current_weight FLOAT,
+  goal_weight FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
