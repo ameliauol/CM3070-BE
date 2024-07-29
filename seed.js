@@ -21,14 +21,16 @@ const seedDatabase = async () => {
       VALUES
         ('john_doe', 'john@example.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8gqC0.Ycf3qlJ10zE6xNBjKqDtd2o6', 'John Doe'),
         ('jane_smith', 'jane@example.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8gqC0.Ycf3qlJ10zE6xNBjKqDtd2o6', 'Jane Smith')
-      RETURNING id;
+      RETURNING id, username;
     `;
     const usersResult = await client.query(usersQuery);
-    const userIds = usersResult.rows.map((row) => row.id);
+    const users = usersResult.rows;
+    const userIds = users.map((user) => user.id);
+    const userNames = users.map((user) => user.username);
 
     // Insert Available Programmes
     const programmesQuery = `
-      INSERT INTO available_programmes (name, description, created_by_user_id)
+      INSERT INTO available_programmes (name, description, author_id)
       VALUES
         ('Weight Loss', 'A programme focused on weight loss', ${userIds[0]}),
         ('Muscle Building', 'A programme focused on muscle building', ${userIds[1]})
@@ -84,33 +86,33 @@ const seedDatabase = async () => {
 
     // Insert User Exercises
     const userExercisesQuery = `
-  INSERT INTO user_exercises (user_programme_id, exercise_id, current_weight)
-  VALUES
-    (${userProgrammeIds[0]}, ${exerciseIds[0]}, 20),
-    (${userProgrammeIds[0]}, ${exerciseIds[1]}, 50),
-    (${userProgrammeIds[1]}, ${exerciseIds[0]}, 30)
-  RETURNING id;
-`;
+      INSERT INTO user_exercises (user_programme_id, exercise_id, current_weight)
+      VALUES
+        (${userProgrammeIds[0]}, ${exerciseIds[0]}, 20),
+        (${userProgrammeIds[0]}, ${exerciseIds[1]}, 50),
+        (${userProgrammeIds[1]}, ${exerciseIds[0]}, 30)
+      RETURNING id;
+    `;
     const userExercisesResult = await client.query(userExercisesQuery);
     const userExerciseIds = userExercisesResult.rows.map((row) => row.id);
 
     // Insert Exercise Records
     const exerciseRecordsQuery = `
-  INSERT INTO exercise_records (user_exercise_id, weight, date_achieved)
-  VALUES
-    (${userExerciseIds[0]}, 20, '2024-06-02'),
-    (${userExerciseIds[1]}, 50, '2024-06-03'),
-    (${userExerciseIds[2]}, 30, '2024-06-04')
-`;
+      INSERT INTO exercise_records (user_exercise_id, weight, date_achieved)
+      VALUES
+        (${userExerciseIds[0]}, 20, '2024-06-02'),
+        (${userExerciseIds[1]}, 50, '2024-06-03'),
+        (${userExerciseIds[2]}, 30, '2024-06-04')
+    `;
     await client.query(exerciseRecordsQuery);
 
     // Insert User Calendar Entries
     const userCalendarQuery = `
-  INSERT INTO user_calendar (user_id, date, programme_id)
-  VALUES
-    (${userIds[0]}, '2024-06-02', ${userProgrammeIds[0]}),
-    (${userIds[1]}, '2024-06-03', ${userProgrammeIds[1]})
-`;
+      INSERT INTO user_calendar (user_id, date, programme_id)
+      VALUES
+        (${userIds[0]}, '2024-06-02', ${userProgrammeIds[0]}),
+        (${userIds[1]}, '2024-06-03', ${userProgrammeIds[1]})
+    `;
     await client.query(userCalendarQuery);
 
     console.log("Database seeded successfully!");

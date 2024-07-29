@@ -10,7 +10,7 @@ router.get(
   "/get/:username",
   authenticateToken,
   usersController.getUserByUsername
-); // Get user by ID
+); // Get user by username
 router.put(
   "/update/:currUsername",
   authenticateToken,
