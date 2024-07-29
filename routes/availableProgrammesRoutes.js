@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const { authenticateToken } = require("../middleware/authenticateToken");
 const availableProgrammesController = require("../controllers/availableProgrammesController");
 
 // Routes related to available programmes
-router.get(
-  "/available_programmes",
-  availableProgrammesController.getAllAvailableProgrammes
-);
+router.get("/get/all", availableProgrammesController.getAllAvailableProgrammes);
 router.post(
-  "/available_programmes",
+  "/create",
+  authenticateToken,
   availableProgrammesController.createProgramme
 );
 
