@@ -7,11 +7,6 @@ client.query(
   username VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  name CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -50,8 +45,7 @@ CREATE TABLE IF NOT EXISTS programme_exercises (
   programme_id INTEGER REFERENCES available_programmes(id) ON DELETE CASCADE,
   exercise_id INTEGER REFERENCES exercises(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT unique_programme_exercise UNIQUE (programme_id, exercise_id)
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_programmes (
@@ -63,21 +57,15 @@ CREATE TABLE IF NOT EXISTS user_programmes (
   active_days VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT chk_active_days CHECK (active_days ~ '^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)(,(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)){0,2}$'),
-  CONSTRAINT chk_active_days_count CHECK (
-    (
-      SELECT SUM(ARRAY_LENGTH(string_to_array(up.active_days, ','), 1))
-      FROM user_programmes up
-      WHERE up.user_id = NEW.user_id AND up.status = 'active'
-    ) <= 5
-  )
+  CONSTRAINT chk_active_days CHECK (active_days ~ '^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)(,(monday|tuesday|wednesday|thursday|friday|saturday|sunday)){0,2}$')
 );
 
 CREATE TABLE IF NOT EXISTS user_exercises (
   id SERIAL PRIMARY KEY,
   user_programme_id INTEGER REFERENCES user_programmes(id) ON DELETE CASCADE,
   exercise_id INTEGER REFERENCES exercises(id),
-  current_weight FLOAT,
+  current_weight FLOAT,  
+  goal_weight FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

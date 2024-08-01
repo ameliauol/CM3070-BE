@@ -1,16 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const userProgrammesController = require("../controllers/userProgrammesController");
+const { authenticateToken } = require("../middleware/authenticateToken");
 
 // Routes related to user programmes
-router.get("/user_programmes", userProgrammesController.getAllUserProgrammes);
-router.post("/user_programmes", userProgrammesController.createUserProgramme);
+router.get("/get/all", userProgrammesController.getAllUserProgrammes);
+router.post(
+  "/join/:id",
+  authenticateToken,
+  userProgrammesController.addProgrammeToUser
+);
 router.put(
-  "/user_programmes/:id",
+  "/update/:id",
+  authenticateToken,
   userProgrammesController.updateUserProgrammeById
 );
 router.delete(
-  "/user_programmes/:id",
+  "/delete/:id",
+  authenticateToken,
   userProgrammesController.deleteUserProgrammeById
 );
 
