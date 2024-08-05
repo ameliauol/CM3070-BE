@@ -21,7 +21,7 @@ const userCalendarRoutes = require("./routes/userCalendarRoutes");
 // Use routes
 app.use("/users", usersRoutes);
 app.use("/exercise/instructions", exerciseInstructionsRoutes);
-app.use("/exercises/record", exercisesRecordsRoutes);
+app.use("/exercises/records", exercisesRecordsRoutes);
 app.use("/exercises", exercisesRoutes);
 app.use("/programme/exercises", programmeExercisesRoutes);
 app.use("/user/programmes", userProgrammesRoutes);

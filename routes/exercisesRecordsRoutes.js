@@ -4,16 +4,17 @@ const exercisesRecordsController = require("../controllers/exercisesRecordsContr
 
 // Routes related to exercise records
 router.get(
-  "/exercise_records/:id",
-  exercisesRecordsController.getAllExerciseRecordsForUserExercise
+  "/get/all",
+  exercisesRecordsController.getAllExerciseRecordsForUserExercises
+);
+router.get(
+  "/get/:id",
+  exercisesRecordsController.getAllExerciseRecordsForUserExerciseId
 );
 router.post(
-  "/exercise_records/:id",
+  "/add/new/:id",
   exercisesRecordsController.addExerciseRecordForUserExercise
 );
-router.delete(
-  "/exercise_records/:record_id",
-  exercisesRecordsController.deleteRecord
-);
+router.delete("/delete/:id", exercisesRecordsController.deleteRecord);
 
 module.exports = router;

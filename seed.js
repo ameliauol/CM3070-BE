@@ -97,11 +97,11 @@ const seedDatabase = async () => {
 
     // Insert Exercise Records
     const exerciseRecordsQuery = `
-      INSERT INTO exercise_records (user_exercise_id, weight, date_achieved)
+      INSERT INTO exercise_records (user_exercise_id, weight)
       VALUES
-        (${userExerciseIds[0]}, 20, '2024-06-02'),
-        (${userExerciseIds[1]}, 50, '2024-06-03'),
-        (${userExerciseIds[2]}, 30, '2024-06-04')
+        (${userExerciseIds[0]}, 20),
+        (${userExerciseIds[1]}, 50),
+        (${userExerciseIds[2]}, 30)
     `;
     await client.query(exerciseRecordsQuery);
 
