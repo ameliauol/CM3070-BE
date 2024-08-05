@@ -8,7 +8,7 @@ router.get(
   exercisesRecordsController.getAllExerciseRecordsForUserExercises
 );
 router.get(
-  "/get/:id",
+  "/get/filter/user-exercise/:id",
   exercisesRecordsController.getAllExerciseRecordsForUserExerciseId
 );
 router.post(

@@ -76,15 +76,6 @@ CREATE TABLE IF NOT EXISTS exercise_records (
   weight FLOAT NOT NULL,
   date_achieved TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS user_calendar (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  date DATE,
-  programme_id INTEGER REFERENCES user_programmes(id),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 `,
   (err, res) => {
     if (err) {

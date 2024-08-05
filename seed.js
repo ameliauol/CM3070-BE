@@ -104,16 +104,6 @@ const seedDatabase = async () => {
         (${userExerciseIds[2]}, 30)
     `;
     await client.query(exerciseRecordsQuery);
-
-    // Insert User Calendar Entries
-    const userCalendarQuery = `
-      INSERT INTO user_calendar (user_id, date, programme_id)
-      VALUES
-        (${userIds[0]}, '2024-06-02', ${userProgrammeIds[0]}),
-        (${userIds[1]}, '2024-06-03', ${userProgrammeIds[1]})
-    `;
-    await client.query(userCalendarQuery);
-
     console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
