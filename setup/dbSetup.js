@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS user_exercises (
   id SERIAL PRIMARY KEY,
   user_programme_id INTEGER REFERENCES user_programmes(id) ON DELETE CASCADE,
   exercise_id INTEGER REFERENCES exercises(id),
-  current_weight FLOAT NOT NULL,
+  start_weight FLOAT NOT NULL,
   goal_weight FLOAT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

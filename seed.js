@@ -85,7 +85,7 @@ const seedDatabase = async () => {
 
     // Insert User Exercises with Goal Weight
     const userExercisesQuery = `
-      INSERT INTO user_exercises (user_programme_id, exercise_id, current_weight, goal_weight)
+      INSERT INTO user_exercises (user_programme_id, exercise_id, start_weight, goal_weight)
       VALUES
         (${userProgrammeIds[0]}, ${exerciseIds[0]}, 20, 50),
         (${userProgrammeIds[0]}, ${exerciseIds[1]}, 50, 100),

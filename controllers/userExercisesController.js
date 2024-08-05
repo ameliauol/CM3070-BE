@@ -48,9 +48,9 @@ exports.getUserExercisesByUserProgrammeId = async (req, res) => {
 // Add a new exercise data/log to a user programme
 exports.addExerciseLogToUserProgramme = async (req, res) => {
   const userProgrammeId = req.params.id;
-  const { exercise_id, current_weight, goal_weight } = req.body;
+  const { exercise_id, start_weight, goal_weight } = req.body;
   try {
-    if (!userProgrammeId || !exercise_id || !current_weight || !goal_weight) {
+    if (!userProgrammeId || !exercise_id || !start_weight || !goal_weight) {
       return res.status(400).json({
         error:
           "User Programme ID, Exercise ID, current weight and goal weight are required",
@@ -58,8 +58,8 @@ exports.addExerciseLogToUserProgramme = async (req, res) => {
     }
 
     const newUserExercise = await client.query(
-      "INSERT INTO user_exercises (user_programme_id, exercise_id, current_weight, goal_weight) VALUES ($1, $2, $3, $4) RETURNING *",
-      [userProgrammeId, exercise_id, current_weight, goal_weight]
+      "INSERT INTO user_exercises (user_programme_id, exercise_id, start_weight, goal_weight) VALUES ($1, $2, $3, $4) RETURNING *",
+      [userProgrammeId, exercise_id, start_weight, goal_weight]
     );
     res.status(201).json(newUserExercise.rows[0]);
   } catch (error) {
