@@ -11,6 +11,21 @@ const getAllUserProgrammes = async (req, res) => {
   }
 };
 
+// Fetch user programmes by id
+const getUserProgrammeById = async (req, res) => {
+  const userProgrammeId = req.params.id;
+  try {
+    const { rows } = await client.query(
+      "SELECT * FROM user_programmes WHERE id=$1",
+      [userProgrammeId]
+    );
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error fetching user programmes:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Add existing (available) programme to user
 const addProgrammeToUser = async (req, res) => {
   const userId = req.user.id;
@@ -259,6 +274,7 @@ const deleteUserProgrammeById = async (req, res) => {
 
 module.exports = {
   getAllUserProgrammes,
+  getUserProgrammeById,
   addProgrammeToUser,
   updateUserProgrammeById,
   deleteUserProgrammeById,
