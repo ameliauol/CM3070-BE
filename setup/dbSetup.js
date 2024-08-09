@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS exercises (
   name VARCHAR(255) NOT NULL,
   category VARCHAR(255) NOT NULL,
   description TEXT,
+  is_weighted BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT chk_category CHECK (category IN ('chest', 'back', 'arms', 'legs', 'core', 'full body', 'shoulders', 'others', 'cardio'))
@@ -44,6 +45,8 @@ CREATE TABLE IF NOT EXISTS programme_exercises (
   id SERIAL PRIMARY KEY,
   programme_id INTEGER REFERENCES available_programmes(id) ON DELETE CASCADE,
   exercise_id INTEGER REFERENCES exercises(id) ON DELETE CASCADE,
+  reps INTEGER NOT NULL DEFAULT 1,
+  sets INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -64,8 +67,10 @@ CREATE TABLE IF NOT EXISTS user_exercises (
   id SERIAL PRIMARY KEY,
   user_programme_id INTEGER REFERENCES user_programmes(id) ON DELETE CASCADE,
   exercise_id INTEGER REFERENCES exercises(id),
-  start_weight FLOAT NOT NULL,
-  goal_weight FLOAT NOT NULL,
+  start_weight FLOAT,
+  goal_weight FLOAT,
+  start_reps INTEGER DEFAULT 1,
+  goal_reps INTEGER DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -73,9 +78,12 @@ CREATE TABLE IF NOT EXISTS user_exercises (
 CREATE TABLE IF NOT EXISTS exercise_records (
   id SERIAL PRIMARY KEY,
   user_exercise_id INTEGER REFERENCES user_exercises(id) ON DELETE CASCADE,
-  weight FLOAT NOT NULL,
+  weight FLOAT,
+  reps_completed INTEGER NOT NULL DEFAULT 0,
+  sets_completed INTEGER NOT NULL DEFAULT 1,
   date_achieved TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 `,
   (err, res) => {
     if (err) {

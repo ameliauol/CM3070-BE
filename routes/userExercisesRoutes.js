@@ -5,8 +5,9 @@ const { authenticateToken } = require("../middleware/authenticateToken");
 
 // Routes related to user exercises
 router.get("/get/all", userExercisesController.getAllUserExercises);
+router.get("/get/:id", userExercisesController.getUserExercisesById);
 router.get(
-  "/get/filter/:id",
+  "/get/filter/user-programme/:id",
   // authenticateToken,
   userExercisesController.getUserExercisesByUserProgrammeId
 );

@@ -17,50 +17,51 @@ exports.getAllExercisesOfProgrammeId = async (req, res) => {
 
 exports.addExerciseToProgramme = async (req, res) => {
   const programmeId = req.params.id;
-  const { exercise_id } = req.body;
+  const { exercise_id, sets, reps } = req.body;
+
+  if (!exercise_id || !sets || !reps) {
+    return res.status(400).json({
+      error: "Exercise ID, sets, and reps are required.",
+    });
+  }
 
   try {
-    // Check if the programme exists
-    const programmeCheck = await client.query(
-      "SELECT id FROM available_programmes WHERE id = $1",
-      [programmeId]
+    // Check if the programme and exercise exist
+    const programmeAndExerciseCheck = await client.query(
+      `
+      SELECT ap.id AS programme_id, e.id AS exercise_id
+      FROM available_programmes ap
+      JOIN exercises e ON true
+      WHERE ap.id = $1 AND e.id = $2
+      `,
+      [programmeId, exercise_id]
     );
-    if (programmeCheck.rows.length === 0) {
+
+    if (programmeAndExerciseCheck.rows.length === 0) {
       return res.status(404).json({
         error:
-          "Programme not found/is invalid, please create the programme first.",
+          "Programme or exercise not found. Please ensure both IDs are valid.",
       });
     }
 
-    // Check if the exercise exists
-    const exerciseCheck = await client.query(
-      "SELECT id FROM exercises WHERE id = $1",
-      [exercise_id]
-    );
-    if (exerciseCheck.rows.length === 0) {
-      return res.status(404).json({
-        error:
-          "Exercise not found/is invalid, please create the exercise first.",
-      });
-    }
-
+    // Check if the exercise already exists in the programme
     const exerciseInProgrammeCheck = await client.query(
-      "SELECT id FROM programme_exercises WHERE exercise_id = $1",
-      [exercise_id]
+      "SELECT id FROM programme_exercises WHERE programme_id = $1 AND exercise_id = $2",
+      [programmeId, exercise_id]
     );
-    if (exerciseInProgrammeCheck) {
+    if (exerciseInProgrammeCheck.rows.length > 0) {
       return res.status(400).json({
-        error: "Exercise already exists in the programme.",
+        error: `Exercise ${exercise_id} already exists in programme ${programmeId}1.`,
       });
     }
 
     // Add the exercise to the programme
-    const newProgrammeExercise = await client.query(
-      "INSERT INTO programme_exercises (programme_id, exercise_id) VALUES ($1, $2) RETURNING *",
-      [programmeId, exercise_id]
+    const createdProgrammeExercise = await client.query(
+      "INSERT INTO programme_exercises (programme_id, exercise_id, sets, reps) VALUES ($1, $2, $3, $4) RETURNING *",
+      [programmeId, exercise_id, sets, reps]
     );
 
-    res.status(201).json(newProgrammeExercise.rows[0]);
+    res.status(201).json(createdProgrammeExercise.rows[0]);
   } catch (error) {
     console.error("Error adding exercise to programme:", error);
     res.status(500).json({ error: "Internal Server Error" });

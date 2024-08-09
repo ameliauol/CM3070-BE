@@ -16,7 +16,6 @@ exports.getAllAvailableProgrammes = async (req, res) => {
   }
 };
 
-// Create a new programme and return with the author's username
 exports.createProgramme = async (req, res) => {
   const userId = req.user.id;
   const { name, description } = req.body;
@@ -26,24 +25,19 @@ exports.createProgramme = async (req, res) => {
   }
 
   try {
-    // Insert the new programme
-    await client.query(
-      "INSERT INTO available_programmes (name, description, author_id) VALUES ($1, $2, $3)",
-      [name, description, userId]
-    );
-
-    // Fetch the newly created programme including the author's username
-    const newProgramme = await client.query(
+    // Use RETURNING and explicit LEFT JOIN
+    const createdProgramme = await client.query(
       `
-      SELECT ap.*, u.username AS author_username
+      INSERT INTO available_programmes (name, description, author_id)
+      VALUES ($1, $2, $3)
+      RETURNING ap.*, u.username AS author_username
       FROM available_programmes ap
       LEFT JOIN users u ON ap.author_id = u.id
-      WHERE ap.name = $1 AND ap.description = $2 AND ap.author_id = $3
       `,
       [name, description, userId]
     );
 
-    res.status(201).json(newProgramme.rows[0]);
+    res.status(201).json(createdProgramme.rows[0]);
   } catch (error) {
     console.error("Error creating programme:", error);
     res.status(500).json({ error: "Internal Server Error" });

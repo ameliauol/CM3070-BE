@@ -16,7 +16,6 @@ const programmeExercisesRoutes = require("./routes/programmeExercisesRoutes");
 const userProgrammesRoutes = require("./routes/userProgrammesRoutes");
 const userExercisesRoutes = require("./routes/userExercisesRoutes");
 const exercisesRecordsRoutes = require("./routes/exercisesRecordsRoutes");
-const userCalendarRoutes = require("./routes/userCalendarRoutes");
 
 // Use routes
 app.use("/users", usersRoutes);
@@ -26,7 +25,6 @@ app.use("/exercises", exercisesRoutes);
 app.use("/programme/exercises", programmeExercisesRoutes);
 app.use("/user/programmes", userProgrammesRoutes);
 app.use("/user/exercises", userExercisesRoutes);
-app.use("/user/calendar", userCalendarRoutes);
 app.use("/available-programmes", availableProgrammesRoutes);
 
 // Connect to the database and start the server

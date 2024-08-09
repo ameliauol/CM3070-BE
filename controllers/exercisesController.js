@@ -13,13 +13,16 @@ exports.getAllExercises = async (req, res) => {
 
 // Create a new exercise
 exports.createExercise = async (req, res) => {
-  const { name, category, description } = req.body;
+  const { name, category, description, is_weighted } = req.body;
 
-  if (!name || !category || !description) {
-    res
-      .status(400)
-      .json({ error: "Name, category, and description are required" });
+  if (!name || !category || !description || is_weighted === undefined) {
+    // Validate is_weighted
+    return res.status(400).json({
+      error: "Name, category, description, and is_weighted are required",
+    });
   }
+
+  const lowercaseCategory = category.toLowerCase();
 
   if (
     ![
@@ -32,16 +35,17 @@ exports.createExercise = async (req, res) => {
       "shoulders",
       "others",
       "cardio",
-    ].includes(category.toLowerCase())
+    ].includes(lowercaseCategory)
   ) {
-    res.status(400).json({ error: "Invalid category" });
+    return res.status(400).json({ error: "Invalid category" });
   }
+
   try {
-    const newExercise = await client.query(
-      "INSERT INTO exercises (name, category, description) VALUES ($1, $2, $3) RETURNING *",
-      [name, category.toLowerCase(), description]
+    const createdExercise = await client.query(
+      "INSERT INTO exercises (name, category, description, is_weighted) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, lowercaseCategory, description, is_weighted]
     );
-    res.status(201).json(newExercise.rows[0]);
+    res.status(201).json(createdExercise.rows[0]);
   } catch (error) {
     console.error("Error creating exercise:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -11,6 +11,21 @@ exports.registerUser = async (req, res) => {
 
   try {
     username = username.toLowerCase();
+    email = email.toLowerCase(); // Ensure email is lowercase for case-insensitive comparison
+
+    // Check if username or email already exists
+    const existingUser = await client.query(
+      "SELECT id FROM users WHERE LOWER(username) = $1 OR LOWER(email) = $2",
+      [username, email]
+    );
+
+    if (existingUser.rows.length > 0) {
+      if (existingUser.rows[0].username === username) {
+        return res.status(400).json({ error: "Username already exists" });
+      } else {
+        return res.status(400).json({ error: "Email already exists" });
+      }
+    }
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -159,6 +174,16 @@ exports.updateUserByUsername = async (req, res) => {
     res.json(updatedUser.rows[0]);
   } catch (error) {
     console.error("Error updating user:", error);
+
+    // If the error is a unique constraint violation, return a more specific error
+    if (error.code === "23505") {
+      if (error.detail.includes("username")) {
+        return res.status(400).json({ error: "Username already exists" });
+      } else if (error.detail.includes("email")) {
+        return res.status(400).json({ error: "Email already exists" });
+      }
+    }
+
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

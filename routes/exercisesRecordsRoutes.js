@@ -15,6 +15,9 @@ router.post(
   "/add/new/:id",
   exercisesRecordsController.addExerciseRecordForUserExercise
 );
-router.delete("/delete/:id", exercisesRecordsController.deleteRecord);
+router.delete(
+  "/delete/:id",
+  exercisesRecordsController.deleteExerciseRecordById
+);
 
 module.exports = router;

@@ -6,6 +6,10 @@ const { authenticateToken } = require("../middleware/authenticateToken");
 // Routes related to user programmes
 router.get("/get/all", userProgrammesController.getAllUserProgrammes);
 router.get("/get/:id", userProgrammesController.getUserProgrammeById);
+router.get(
+  "/get/user/:user_id",
+  userProgrammesController.getUserProgrammesByUserId
+);
 router.post(
   "/join/:id",
   authenticateToken,
