@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userExercisesController = require("../controllers/userExercisesController");
-const { authenticateToken } = require("../middleware/authenticateToken");
+const { authenticateToken } = require("../middleware/authMiddleware");
 
 // Routes related to user exercises
 router.get("/get/all", userExercisesController.getAllUserExercises);

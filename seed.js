@@ -23,6 +23,7 @@ const seedDatabase = async () => {
         ('jane_smith', 'jane@example.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8gqC0.Ycf3qlJ10zE6xNBjKqDtd2o6', 'Jane Smith'),
         ('mike_johnson', 'mike@example.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8gqC0.Ycf3qlJ10zE6xNBjKqDtd2o6', 'Mike Johnson'),
         ('alice_wilson', 'alice@example.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8gqC0.Ycf3qlJ10zE6xNBjKqDtd2o6', 'Alice Wilson')
+        
       RETURNING id, username;
     `;
     const usersResult = await client.query(usersQuery);

@@ -5,11 +5,9 @@ exports.authenticateToken = (req, res, next) => {
 
   const authHeader = req.headers["authorization"];
   if (!authHeader) {
-    return res
-      .status(401)
-      .json({
-        error: "No token provided, you must be logged in to make this request",
-      });
+    return res.status(401).json({
+      error: "No token provided, you must be logged in to make this request",
+    });
   }
 
   const tokenParts = authHeader.split(" ");
@@ -27,4 +25,12 @@ exports.authenticateToken = (req, res, next) => {
     req.user = user;
     next();
   });
+};
+
+exports.isAdmin = (req, res, next) => {
+  if (req.user && req.user.is_admin) {
+    next();
+  } else {
+    return res.status(403).json({ error: "Forbidden: Admin access required" });
+  }
 };
