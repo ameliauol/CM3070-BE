@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Import routes
 const usersRoutes = require("./routes/usersRoutes");
-const availableProgrammesRoutes = require("./routes/availableProgrammesRoutes");
+const programmesRoutes = require("./routes/programmesRoutes");
 const exercisesRoutes = require("./routes/exercisesRoutes");
 const exerciseInstructionsRoutes = require("./routes/exerciseInstructionsRoutes");
 const programmeExercisesRoutes = require("./routes/programmeExercisesRoutes");
@@ -25,7 +25,7 @@ app.use("/exercises", exercisesRoutes);
 app.use("/programme/exercises", programmeExercisesRoutes);
 app.use("/user/programmes", userProgrammesRoutes);
 app.use("/user/exercises", userExercisesRoutes);
-app.use("/available-programmes", availableProgrammesRoutes);
+app.use("/programmes", programmesRoutes);
 
 // Connect to the database and start the server
 (async () => {

@@ -12,7 +12,7 @@ const seedDatabase = async () => {
 
     // Clear existing data
     await client.query(
-      "TRUNCATE TABLE exercise_records, user_exercises, user_programmes, programme_exercises, exercise_instructions, exercises, available_programmes, users CASCADE"
+      "TRUNCATE TABLE exercise_records, user_exercises, user_programmes, programme_exercises, exercise_instructions, exercises, programmes, users CASCADE"
     );
 
     // Insert Users
@@ -29,9 +29,9 @@ const seedDatabase = async () => {
     const users = usersResult.rows;
     const userIds = users.map((user) => user.id);
 
-    // Insert Available Programmes
+    // Insert Programmes
     const programmesQuery = `
-      INSERT INTO available_programmes (name, description, author_id)
+      INSERT INTO programmes (name, description, author_id)
       VALUES
         ('Weight Loss', 'A program focused on weight loss', ${userIds[0]}),
         ('Muscle Building', 'A program focused on muscle building', ${userIds[1]}),

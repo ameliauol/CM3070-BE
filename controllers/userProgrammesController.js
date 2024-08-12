@@ -51,7 +51,7 @@ const getUserProgrammesByUserId = async (req, res) => {
   }
 };
 
-// Add existing (available) programme to user
+// Add existing programme to user
 const addProgrammeToUser = async (req, res) => {
   const userId = req.user.id;
   if (!userId) {
@@ -83,10 +83,10 @@ const addProgrammeToUser = async (req, res) => {
     // Check if the programme exists and if the user has already joined
     const programmeAndUserCheck = await client.query(
       `
-      SELECT ap.id AS programme_id, up.id AS user_programme_id
-      FROM available_programmes ap
-      LEFT JOIN user_programmes up ON ap.id = up.programme_id AND up.user_id = $1
-      WHERE ap.id = $2
+      SELECT p.id AS programme_id, up.id AS user_programme_id
+      FROM programmes p
+      LEFT JOIN user_programmes up ON p.id = up.programme_id AND up.user_id = $1
+      WHERE p.id = $2
       `,
       [userId, programmeId]
     );

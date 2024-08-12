@@ -29,10 +29,10 @@ exports.addExerciseToProgramme = async (req, res) => {
     // Check if the programme and exercise exist
     const programmeAndExerciseCheck = await client.query(
       `
-      SELECT ap.id AS programme_id, e.id AS exercise_id
-      FROM available_programmes ap
+      SELECT p.id AS programme_id, e.id AS exercise_id
+      FROM programmes p
       JOIN exercises e ON true
-      WHERE ap.id = $1 AND e.id = $2
+      WHERE p.id = $1 AND e.id = $2
       `,
       [programmeId, exercise_id]
     );
