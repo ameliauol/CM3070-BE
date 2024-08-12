@@ -1,4 +1,4 @@
-const { client } = require("../db");
+const { client } = require("../setup/db");
 
 exports.getAllProgrammes = async (req, res) => {
   try {
@@ -28,7 +28,7 @@ exports.getProgrammeById = async (req, res) => {
       `,
       [programmeId]
     );
-    
+
     if (programme.rows.length === 0) {
       return res.status(404).json({ error: "Programme not found" });
     }

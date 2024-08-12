@@ -1,4 +1,4 @@
-const { client } = require("../db");
+const { client } = require("../setup/db");
 
 // Get All User Exercises
 exports.getAllUserExercises = async (req, res) => {

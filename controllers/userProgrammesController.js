@@ -1,4 +1,4 @@
-const { client } = require("../db");
+const { client } = require("../setup/db");
 
 // Fetch all user programmes
 const getAllUserProgrammes = async (req, res) => {
