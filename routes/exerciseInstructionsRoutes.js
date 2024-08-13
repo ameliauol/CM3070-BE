@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const exerciseInstructionsController = require("../controllers/exerciseInstructionsController");
+const { authenticateToken, isAdmin } = require("../middleware/authMiddleware");
 
 router.get(
   "/get/all",
@@ -12,6 +13,8 @@ router.get(
 );
 router.post(
   "/create",
+  authenticateToken,
+  isAdmin,
   exerciseInstructionsController.createExerciseInstruction
 );
 

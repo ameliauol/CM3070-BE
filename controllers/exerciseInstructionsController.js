@@ -16,7 +16,7 @@ const getAllExerciseInstructions = async (req, res) => {
     res.status(200).json(exerciseInstructions);
   } catch (error) {
     console.error("Error fetching exercise instructions:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -42,7 +42,7 @@ const getExerciseInstructionsByExerciseId = async (req, res) => {
       "Error fetching exercise instructions by exercise ID:",
       error
     );
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -83,7 +83,7 @@ const createExerciseInstruction = async (req, res) => {
     res.status(201).json(newInstruction[0]);
   } catch (error) {
     console.error("Error creating exercise instruction:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

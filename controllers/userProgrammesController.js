@@ -3,34 +3,63 @@ const { client } = require("../setup/db");
 // Fetch all user programmes
 const getAllUserProgrammes = async (req, res) => {
   try {
+    if (!req.user.is_admin) {
+      return res.status(403).json({
+        message:
+          "Unauthorized request, you can only view all user programmes if you are an admin.",
+      });
+    }
+
     const { rows: userProgrammes } = await client.query(
       "SELECT * FROM user_programmes"
     );
     res.status(200).json(userProgrammes);
   } catch (error) {
     console.error("Error fetching user programmes:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 // Fetch user programmes by id
 const getUserProgrammeById = async (req, res) => {
   const userProgrammeId = req.params.id;
+
   try {
     const { rows: userProgramme } = await client.query(
       "SELECT * FROM user_programmes WHERE id = $1",
       [userProgrammeId]
     );
+
+    if (userProgramme.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No User programme has been found." });
+    }
+
+    if (userProgramme[0].user_id !== req.user.id && !req.user.is_admin) {
+      return res.status(403).json({
+        message:
+          "Unauthorized request, you can only view user programmes for your own account or if you are an admin.",
+      });
+    }
+
     res.status(200).json(userProgramme);
   } catch (error) {
     console.error("Error fetching user programme by ID:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 // Fetch user programmes by user ID
 const getUserProgrammesByUserId = async (req, res) => {
   const userId = req.params.user_id;
+
+  if (userId !== req.user.id && !req.user.is_admin) {
+    return res.status(403).json({
+      message:
+        "Unauthorized request, you can only view user programmes for your own account or if you are an admin.",
+    });
+  }
 
   try {
     const { rows: userProgrammes } = await client.query(
@@ -47,7 +76,7 @@ const getUserProgrammesByUserId = async (req, res) => {
     res.status(200).json(userProgrammes);
   } catch (error) {
     console.error("Error fetching user programmes by user ID:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -58,6 +87,13 @@ const addProgrammeToUser = async (req, res) => {
     return res
       .status(401)
       .json({ message: "Please log in and provide an authorization token." });
+  }
+
+  if (req.user.id !== userId && !req.user.is_admin) {
+    return res.status(403).json({
+      message:
+        "You can only add programmes to your own account, unless you are an admin.",
+    });
   }
 
   const programmeId = req.params.id;
@@ -144,17 +180,26 @@ const addProgrammeToUser = async (req, res) => {
     res.status(201).json(newUserProgramme[0]);
   } catch (error) {
     console.error("Error adding programme to user:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const updateUserProgrammeById = async (req, res) => {
   const userId = req.user.id;
+
   if (!userId) {
     return res
       .status(401)
       .json({ message: "Please log in and provide an authorization token." });
   }
+
+  if (req.user.id !== userId && !req.user.is_admin) {
+    return res.status(403).json({
+      message:
+        "You can only update programmes for your own account, unless you are an admin.",
+    });
+  }
+
   const programmeId = req.params.id;
   const { start_date, status, active_days } = req.body;
 
@@ -277,17 +322,25 @@ const updateUserProgrammeById = async (req, res) => {
     res.status(200).json(updatedProgramme[0]);
   } catch (error) {
     console.error("Error updating user programme:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 // Delete a user programme by programmeId for logged in user
 const deleteUserProgrammeById = async (req, res) => {
   const userId = req.user.id;
+
   if (!userId) {
     return res
       .status(401)
       .json({ message: "Please log in and provide an authorization token." });
+  }
+
+  if (req.user.id !== userId && !req.user.is_admin) {
+    return res.status(403).json({
+      message:
+        "You can only delete programmes for your own account, unless you are an admin.",
+    });
   }
 
   const programmeId = req.params.id;
@@ -307,7 +360,7 @@ const deleteUserProgrammeById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting user programme:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

@@ -1,13 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const userProgrammesController = require("../controllers/userProgrammesController");
-const { authenticateToken } = require("../middleware/authMiddleware");
+const { authenticateToken, isAdmin } = require("../middleware/authMiddleware");
 
 // Routes related to user programmes
-router.get("/get/all", userProgrammesController.getAllUserProgrammes);
-router.get("/get/:id", userProgrammesController.getUserProgrammeById);
+router.get(
+  "/get/all",
+  authenticateToken,
+  isAdmin,
+  userProgrammesController.getAllUserProgrammes
+);
+router.get(
+  "/get/:id",
+  authenticateToken,
+  userProgrammesController.getUserProgrammeById
+);
 router.get(
   "/get/user/:user_id",
+  authenticateToken,
   userProgrammesController.getUserProgrammesByUserId
 );
 router.post(
