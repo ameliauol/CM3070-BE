@@ -49,14 +49,16 @@ exports.createProgramme = async (req, res) => {
   }
 
   try {
-    // Use RETURNING and explicit LEFT JOIN
     const createdProgramme = await client.query(
       `
-      INSERT INTO programme (name, description, author_id)
-      VALUES ($1, $2, $3)
-      RETURNING p.*, u.username AS author_username
-      FROM programmes p
-      LEFT JOIN users u ON p.author_id = u.id
+      WITH new_programme AS (
+        INSERT INTO programmes (name, description, author_id) 
+        VALUES ($1, $2, $3)
+        RETURNING *
+      )
+      SELECT new_programme.*, users.username AS author_username
+      FROM new_programme
+      LEFT JOIN users ON new_programme.author_id = users.id;
       `,
       [name, description, userId]
     );

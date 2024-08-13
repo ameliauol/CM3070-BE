@@ -5,7 +5,7 @@ const { authenticateToken, isAdmin } = require("../middleware/authMiddleware");
 
 router.post("/register", usersController.registerUser);
 router.post("/login", usersController.loginUser);
-router.get("/get/all", isAdmin, usersController.getAllUsers);
+router.get("/get/all", authenticateToken, isAdmin, usersController.getAllUsers);
 router.get(
   "/get/:username",
   authenticateToken,

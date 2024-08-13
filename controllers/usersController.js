@@ -103,7 +103,7 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserByUsername = async (req, res) => {
   const username = req.params.username.toLowerCase();
 
-  if (req.user.username.toLowerCase() !== username) {
+  if (req.user.username.toLowerCase() !== username && !req.user.is_admin) {
     return res
       .status(403)
       .json({ error: "You can only fetch your own account" });
@@ -128,7 +128,7 @@ exports.getUserByUsername = async (req, res) => {
 
 /* Allow update OR delete if and only if:
   1. The user is updating their own account OR
-  2. The correct admin secret key is provided OR
+  2. The correct admin secret key is provided (if not user's account and NOT admin) OR
   3. The user is an admin
 */
 exports.updateUserByUsername = async (req, res) => {
@@ -190,7 +190,7 @@ exports.updateUserByUsername = async (req, res) => {
       return res.status(400).json({ error: "No fields to update" });
     }
 
-    values.push(currUsername);
+    values.push(usernameToUpdate);
 
     const updatedUser = await client.query(
       `UPDATE users SET ${fields.join(
@@ -224,7 +224,7 @@ exports.deleteUserByUsername = async (req, res) => {
 
   try {
     if (
-      currentUser !== usernameToUpdate &&
+      currentUser !== usernameToDelete &&
       adminSecretKey !== process.env.ADMIN_SECRET_KEY &&
       !req.user.is_admin
     ) {
