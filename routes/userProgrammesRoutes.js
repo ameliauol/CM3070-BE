@@ -20,6 +20,7 @@ router.get(
   authenticateToken,
   userProgrammesController.getUserProgrammesByUserId
 );
+// Logged in user add for themselves
 router.post(
   "/join/:id",
   authenticateToken,

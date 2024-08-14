@@ -15,16 +15,37 @@ exports.getAllUserExercises = async (req, res) => {
 
 exports.getUserExercisesById = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.id;
+
   try {
+    // 1. Check if the user is authorized to access the user exercise
+    const authorizationCheck = await client.query(
+      `
+      SELECT 1
+      FROM user_exercises 
+      WHERE id = $1 AND user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $2)
+      `,
+      [id, userId]
+    );
+
+    if (authorizationCheck.rows.length === 0 && !req.user.is_admin) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to access this user exercise" });
+    }
+
+    // 2. If authorized, fetch the user exercise
     const { rows: userExercises } = await client.query(
       "SELECT * FROM user_exercises WHERE id = $1",
       [id]
     );
+
     if (userExercises.length === 0) {
       return res
         .status(404)
         .json({ error: "User exercise of specified ID not found" });
     }
+
     res.status(200).json(userExercises);
   } catch (error) {
     console.error("Error fetching user exercises:", error);
@@ -32,9 +53,9 @@ exports.getUserExercisesById = async (req, res) => {
   }
 };
 
-// Get User Exercises by User Programme ID (with optional exercise ID)
 exports.getUserExercisesByUserProgrammeId = async (req, res) => {
   const userProgrammeId = req.params.id;
+  const userId = req.user.id;
   const { exercise_id } = req.body;
 
   if (!userProgrammeId) {
@@ -42,10 +63,26 @@ exports.getUserExercisesByUserProgrammeId = async (req, res) => {
   }
 
   try {
+    // 1. Check if the user is authorized to access the user programme
+    const authorizationCheck = await client.query(
+      `
+      SELECT 1
+      FROM user_programmes
+      WHERE id = $1 AND user_id = $2
+      `,
+      [userProgrammeId, userId]
+    );
+
+    if (authorizationCheck.rows.length === 0 && !req.user.is_admin) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to access this user exercise" });
+    }
+
+    // 2. If authorized, fetch the user exercises
     let query = "SELECT * FROM user_exercises WHERE user_programme_id = $1";
     const queryParams = [userProgrammeId];
 
-    // Additional filter if exercise_id is provided
     if (exercise_id) {
       query += " AND exercise_id = $2";
       queryParams.push(exercise_id);
@@ -149,8 +186,27 @@ exports.addExerciseLogToUserProgramme = async (req, res) => {
 // Delete a User Exercise
 exports.deleteUserExerciseById = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.id;
 
   try {
+    // 1. Check if the user is authorized to delete the user exercise
+    const authorizationCheck = await client.query(
+      `
+      SELECT 1
+      FROM user_exercises 
+      WHERE id = $1 AND user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $2)
+      `,
+      [id, userId]
+    );
+
+    if (authorizationCheck.rows.length === 0 && !req.user.is_admin) {
+      // Not authorized and not admin
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to delete this user exercise" });
+    }
+
+    // 2. If authorized, delete the user exercise
     const result = await client.query(
       "DELETE FROM user_exercises WHERE id = $1 RETURNING *",
       [id]

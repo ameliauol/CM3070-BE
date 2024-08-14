@@ -3,13 +3,6 @@ const { client } = require("../setup/db");
 // Fetch all user programmes
 const getAllUserProgrammes = async (req, res) => {
   try {
-    if (!req.user.is_admin) {
-      return res.status(403).json({
-        message:
-          "Unauthorized request, you can only view all user programmes if you are an admin.",
-      });
-    }
-
     const { rows: userProgrammes } = await client.query(
       "SELECT * FROM user_programmes"
     );
@@ -87,13 +80,6 @@ const addProgrammeToUser = async (req, res) => {
     return res
       .status(401)
       .json({ message: "Please log in and provide an authorization token." });
-  }
-
-  if (req.user.id !== userId && !req.user.is_admin) {
-    return res.status(403).json({
-      message:
-        "You can only add programmes to your own account, unless you are an admin.",
-    });
   }
 
   const programmeId = req.params.id;
