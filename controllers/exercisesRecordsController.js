@@ -58,7 +58,7 @@ const addExerciseRecordForUserExercise = async (req, res) => {
       `
       SELECT ue.id, e.is_weighted
       FROM user_exercises ue
-      JOIN programme_exercises e ON ue.exercise_id = e.exercise_id
+      JOIN exercises e ON ue.exercise_id = e.id
       WHERE ue.id = $1
       `,
       [userExerciseId]
