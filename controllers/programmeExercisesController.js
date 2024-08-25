@@ -50,7 +50,7 @@ exports.addExerciseToProgramme = async (req, res) => {
       [programmeId, exercise_id]
     );
     if (exerciseInProgrammeCheck.rows.length > 0) {
-      return res.status(400).json({
+      return res.status(409).json({
         error: `Exercise ${exercise_id} already exists in programme ${programmeId}1.`,
       });
     }

@@ -21,9 +21,9 @@ exports.registerUser = async (req, res) => {
 
     if (existingUser.rows.length > 0) {
       if (existingUser.rows[0].username === username) {
-        return res.status(400).json({ error: "Username already exists" });
+        return res.status(409).json({ error: "Username already exists" });
       } else {
-        return res.status(400).json({ error: "Email already exists" });
+        return res.status(409).json({ error: "Email already exists" });
       }
     }
 
@@ -208,9 +208,9 @@ exports.updateUserByUsername = async (req, res) => {
     console.error("Error updating user:", error);
     if (error.code === "23505") {
       if (error.detail.includes("username")) {
-        return res.status(400).json({ error: "Username already exists" });
+        return res.status(409).json({ error: "Username already exists" });
       } else if (error.detail.includes("email")) {
-        return res.status(400).json({ error: "Email already exists" });
+        return res.status(409).json({ error: "Email already exists" });
       }
     }
     res.status(500).json({ error: "Internal Server Error" });
