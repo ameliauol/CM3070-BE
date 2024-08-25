@@ -1,10 +1,29 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const { client, connectClient } = require("./setup/db");
 
+const allowedOrigins = [
+  "http://localhost:5173", // Vite local development URL
+  "https://strengthmatrix.netlify.app/", // Production frontend URL
+];
+
 // Middleware
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow credentials (cookies) if needed
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow the Authorization header
+  })
+);
 app.use(express.json());
 
 // Import routes
