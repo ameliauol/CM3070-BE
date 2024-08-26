@@ -109,27 +109,25 @@ const seedDatabase = async () => {
     const programmesResult = await client.query(programmesQuery);
     const programmeIds = programmesResult.rows.map((row) => row.id);
 
-    // Insert Exercises
     const exercisesQuery = `
-      INSERT INTO exercises (name, category, description, is_weighted)
+      INSERT INTO exercises (name, category, description, is_weighted, image_url, video_url)
       VALUES
-        ('Push Up', 'arms', 'An exercise to strengthen arms', false),
-        ('Squat', 'legs', 'An exercise to strengthen legs', true),
-        ('Running', 'cardio', 'A cardiovascular exercise to improve endurance', false),
-        ('Deadlift', 'full body', 'A full body exercise to build strength', true),
-        ('Bench Press', 'chest', 'An exercise to strengthen the chest', true),
-        ('Pull Up', 'back', 'An exercise to strengthen the back', true),
-        ('Plank', 'core', 'An exercise to strengthen the core', false),
-        ('Burpees', 'full body', 'A full body exercise to build endurance', false),
-        ('Lunges', 'legs', 'An exercise to strengthen legs', true),
-        ('Bicep Curl', 'arms', 'An exercise to strengthen biceps', true),
-        ('Tricep Dip', 'arms', 'An exercise to strengthen triceps', false),
-        ('Jump Rope', 'cardio', 'A cardiovascular exercise to improve endurance', false)
+        ('Push Up', 'arms', 'An exercise to strengthen arms', false, 'https://example.com/pushup.jpg', 'https://example.com/pushup.mp4'),
+        ('Squat', 'legs', 'An exercise to strengthen legs', true, 'https://example.com/squat.jpg', 'https://example.com/squat.mp4'),
+        ('Running', 'cardio', 'A cardiovascular exercise to improve endurance', false, 'https://example.com/running.jpg', 'https://example.com/running.mp4'),
+        ('Deadlift', 'full body', 'A full body exercise to build strength', true, 'https://example.com/deadlift.jpg', 'https://example.com/deadlift.mp4'),
+        ('Bench Press', 'chest', 'An exercise to strengthen the chest', true, 'https://example.com/benchpress.jpg', 'https://example.com/benchpress.mp4'),
+        ('Pull Up', 'back', 'An exercise to strengthen the back', true, 'https://example.com/pullup.jpg', 'https://example.com/pullup.mp4'),
+        ('Plank', 'core', 'An exercise to strengthen the core', false, 'https://example.com/plank.jpg', 'https://example.com/plank.mp4'),
+        ('Burpees', 'full body', 'A full body exercise to build endurance', false, 'https://example.com/burpees.jpg', 'https://example.com/burpees.mp4'),
+        ('Lunges', 'legs', 'An exercise to strengthen legs', true, 'https://example.com/lunges.jpg', 'https://example.com/lunges.mp4'),
+        ('Bicep Curl', 'arms', 'An exercise to strengthen biceps', true, 'https://example.com/bicepcurl.jpg', 'https://example.com/bicepcurl.mp4'),
+        ('Tricep Dip', 'arms', 'An exercise to strengthen triceps', false, 'https://example.com/tricepdip.jpg', 'https://example.com/tricepdip.mp4'),
+        ('Jump Rope', 'cardio', 'A cardiovascular exercise to improve endurance', false, 'https://example.com/jumprope.jpg', 'https://example.com/jumprope.mp4')
       RETURNING id;
     `;
     const exercisesResult = await client.query(exercisesQuery);
     const exerciseIds = exercisesResult.rows.map((row) => row.id);
-
     // Insert Exercise Instructions
     const exerciseInstructionsQuery = `
       INSERT INTO exercise_instructions (exercise_id, step_number, instruction)

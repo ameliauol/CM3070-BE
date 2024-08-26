@@ -26,8 +26,10 @@ client.query(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(255) NOT NULL,
-    description TEXT,
-    is_weighted BOOLEAN NOT NULL DEFAULT TRUE,
+    description TEXT NOT NULL,
+    is_weighted BOOLEAN NOT NULL DEFAULT FALSE,
+    image_url VARCHAR(255),
+    video_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_category CHECK (category IN ('chest', 'back', 'arms', 'legs', 'core', 'full body', 'shoulders', 'others', 'cardio'))

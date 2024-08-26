@@ -13,12 +13,21 @@ exports.getAllExercises = async (req, res) => {
 
 // Create a new exercise
 exports.createExercise = async (req, res) => {
-  const { name, category, description, is_weighted } = req.body;
+  const { name, category, description, is_weighted, image_url, video_url } =
+    req.body;
 
-  if (!name || !category || !description || is_weighted === undefined) {
+  if (
+    !name ||
+    !category ||
+    !description ||
+    is_weighted === undefined ||
+    !image_url ||
+    !video_url
+  ) {
     // Validate is_weighted
     return res.status(400).json({
-      error: "Name, category, description, and is_weighted are required",
+      error:
+        "Name, category, description, is_weighted and image_url are required",
     });
   }
 
@@ -42,8 +51,8 @@ exports.createExercise = async (req, res) => {
 
   try {
     const createdExercise = await client.query(
-      "INSERT INTO exercises (name, category, description, is_weighted) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, lowercaseCategory, description, is_weighted]
+      "INSERT INTO exercises (name, category, description, is_weighted, image_url, video_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [name, lowercaseCategory, description, is_weighted, image_url, video_url]
     );
     res.status(201).json(createdExercise.rows[0]);
   } catch (error) {
