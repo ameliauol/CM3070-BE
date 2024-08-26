@@ -13,7 +13,7 @@ const seedDatabase = async () => {
     await connectClient();
     console.log("Connected to the database!");
 
-    // Run a simple test query to verify connection
+    // Verify the connection
     const res = await client.query(`SELECT NOW() as now`);
     console.log("Current Time from DB:", res.rows[0].now);
 
@@ -23,68 +23,30 @@ const seedDatabase = async () => {
     );
 
     // Insert Users
-    const users = [
-      {
-        username: "tester_1",
-        email: "tester_1@example.com",
-        password: process.env.TEST_PASSWORD1,
-        name: "John Doe",
-      },
-      {
-        username: "tester_2",
-        email: "tester_2@example.com",
-        password: process.env.TEST_PASSWORD2,
-        name: "Jane Smith",
-      },
-      {
-        username: "tester_3",
-        email: "tester_3@example.com",
-        password: process.env.TEST_PASSWORD3,
-        name: "Mike Johnson",
-      },
-      {
-        username: "tester_4",
-        email: "tester_4@example.com",
-        password: process.env.TEST_PASSWORD4,
-        name: "Alice Wilson",
-      },
-      {
-        username: "rachel_gina",
-        email: "rachel_gina@example.com",
-        password: process.env.RACHEL_PASSWORD,
-        name: "Rachel Gina",
-        is_admin: true,
-      },
-      {
-        username: "amelia_tan",
-        email: "amelia_tan@example.com",
-        password: process.env.AMELIA_PASSWORD,
-        name: "Amelia Tan",
-        is_admin: true,
-      },
-      {
-        username: "tester_admin",
-        email: "tester_admin@example.com",
-        password: process.env.ADMIN_TESTER_PASSWORD,
-        name: "Tester Admin",
-        is_admin: true,
-      },
-    ];
-
-    for (const user of users) {
-      user.password_hash = await hashPassword(user.password);
-    }
-
     const usersQuery = `
       INSERT INTO users (username, email, password_hash, name, is_admin)
       VALUES
-        ('${users[0].username}', '${users[0].email}', '${users[0].password_hash}', '${users[0].name}', FALSE),
-        ('${users[1].username}', '${users[1].email}', '${users[1].password_hash}', '${users[1].name}', FALSE),
-        ('${users[2].username}', '${users[2].email}', '${users[2].password_hash}', '${users[2].name}', FALSE),
-        ('${users[3].username}', '${users[3].email}', '${users[3].password_hash}', '${users[3].name}', FALSE),
-        ('${users[4].username}', '${users[4].email}', '${users[4].password_hash}', '${users[4].name}', ${users[4].is_admin}),
-        ('${users[5].username}', '${users[5].email}', '${users[5].password_hash}', '${users[5].name}', ${users[5].is_admin}),
-        ('${users[6].username}', '${users[6].email}', '${users[6].password_hash}', '${users[6].name}', ${users[6].is_admin})
+        ('tester_1', 'tester_1@example.com', '${await hashPassword(
+          process.env.TEST_PASSWORD1
+        )}', 'John Doe', FALSE),
+        ('tester_2', 'tester_2@example.com', '${await hashPassword(
+          process.env.TEST_PASSWORD2
+        )}', 'Jane Smith', FALSE),
+        ('tester_3', 'tester_3@example.com', '${await hashPassword(
+          process.env.TEST_PASSWORD3
+        )}', 'Mike Johnson', FALSE),
+        ('tester_4', 'tester_4@example.com', '${await hashPassword(
+          process.env.TEST_PASSWORD4
+        )}', 'Alice Wilson', FALSE),
+        ('rachel_gina', 'rachel_gina@example.com', '${await hashPassword(
+          process.env.RACHEL_PASSWORD
+        )}', 'Rachel Gina', TRUE),
+        ('amelia_tan', 'amelia_tan@example.com', '${await hashPassword(
+          process.env.AMELIA_PASSWORD
+        )}', 'Amelia Tan', TRUE),
+        ('tester_admin', 'tester_admin@example.com', '${await hashPassword(
+          process.env.ADMIN_TESTER_PASSWORD
+        )}', 'Tester Admin', TRUE)
       RETURNING id;
     `;
     const usersResult = await client.query(usersQuery);
@@ -109,6 +71,7 @@ const seedDatabase = async () => {
     const programmesResult = await client.query(programmesQuery);
     const programmeIds = programmesResult.rows.map((row) => row.id);
 
+    // Insert Exercises
     const exercisesQuery = `
       INSERT INTO exercises (name, category, description, is_weighted, image_url, video_url)
       VALUES
@@ -165,8 +128,8 @@ const seedDatabase = async () => {
         'https://www.youtube.com/watch?v=F3QY5vMz_6I'),
 
         ('Leg Press', 'legs', 'A machine-based exercise that strengthens the quadriceps, hamstrings, and glutes.', true, 
-        'https://cdn.pixabay.com/photo/2016/03/27/19/48/leg-press-1284618_1280.jpg', 
-        'https://www.youtube.com/watch?v=lUEqJGWXUJ8'),
+            'https://cdn.pixabay.com/photo/2016/03/27/19/48/leg-press-1284618_1280.jpg', 
+            'https://www.youtube.com/watch?v=lUEqJGWXUJ8'),
 
         ('Mountain Climbers', 'core', 'A dynamic core exercise that also boosts cardiovascular endurance.', false, 
         'https://cdn.pixabay.com/photo/2017/02/08/19/22/mountain-climbers-2042203_1280.jpg', 
@@ -174,138 +137,174 @@ const seedDatabase = async () => {
       RETURNING id;
     `;
 
-    const exercisesResult = await client.query(exercisesQuery);
-    const exerciseIds = exercisesResult.rows.map((row) => row.id);
+    const exerciseResult = await client.query(exercisesQuery);
+    const exerciseIds = exerciseResult.rows.map((row) => row.id);
+
     // Insert Exercise Instructions
     const exerciseInstructionsQuery = `
-      INSERT INTO exercise_instructions (exercise_id, step_number, instruction)
-      VALUES
-        (${exerciseIds[0]}, 1, 'Get into a high plank position.'),
-        (${exerciseIds[0]}, 2, 'Lower your body down to the ground.'),
-        (${exerciseIds[0]}, 3, 'Push yourself back up.'),
-        (${exerciseIds[1]}, 1, 'Stand with feet shoulder-width apart.'),
-        (${exerciseIds[1]}, 2, 'Lower your hips until your thighs are parallel to the ground.'),
-        (${exerciseIds[1]}, 3, 'Return to the starting position.'),
-        (${exerciseIds[2]}, 1, 'Start jogging at a moderate pace.'),
-        (${exerciseIds[3]}, 1, 'Stand with feet hip-width apart.'),
-        (${exerciseIds[3]}, 2, 'Bend at your hips and knees to lower the bar to your knees.'),
-        (${exerciseIds[3]}, 3, 'Pull the bar up to your hips.'),
-        (${exerciseIds[4]}, 1, 'Lie down on a bench.'),
-        (${exerciseIds[4]}, 2, 'Hold the barbell above your chest.'),
-        (${exerciseIds[4]}, 3, 'Lower the bar to your chest and push it back up.'),
-        (${exerciseIds[5]}, 1, 'Hang from a bar with your hands shoulder-width apart.'),
-        (${exerciseIds[5]}, 2, 'Pull your body up until your chin is above the bar.'),
-        (${exerciseIds[5]}, 3, 'Lower yourself back down.'),
-        (${exerciseIds[6]}, 1, 'Get into a plank position with your forearms on the ground.'),
-        (${exerciseIds[6]}, 2, 'Hold the position for as long as possible.'),
-        (${exerciseIds[7]}, 1, 'Stand with feet shoulder-width apart, squat down, and place your hands on the floor.'),
-        (${exerciseIds[7]}, 2, 'Kick your feet back to a push-up position and lower your chest to the floor.'),
-        (${exerciseIds[7]}, 3, 'Return your feet to the squat position and jump up.'),
-        (${exerciseIds[8]}, 1, 'Stand with feet together, take a step forward, and lower your hips until both knees are bent at a 90-degree angle.'),
-        (${exerciseIds[8]}, 2, 'Return to the starting position by pushing off with your front leg.'),
-        (${exerciseIds[9]}, 1, 'Stand with feet shoulder-width apart, hold a dumbbell in each hand with arms hanging down.'),
-        (${exerciseIds[9]}, 2, 'Bend your elbows and curl the weights up towards your shoulders.'),
-        (${exerciseIds[9]}, 3, 'Lower the weights back to the starting position.'),
-        (${exerciseIds[10]}, 1, 'Sit on the edge of a chair or bench, place your hands next to your hips.'),
-        (${exerciseIds[10]}, 2, 'Slide your butt off the edge, bend your elbows, and lower your body down.'),
-        (${exerciseIds[10]}, 3, 'Push yourself back up to the starting position.'),
-        (${exerciseIds[11]}, 1, 'Hold the handles of a jump rope, keep your elbows close to your body, and start jumping by swinging the rope over your head and under your feet.')
-    `;
+    INSERT INTO exercise_instructions (exercise_id, step_number, instruction)
+    VALUES
+      (${exerciseIds[0]}, 1, 'Start in a plank position with your hands directly under your shoulders.'),
+      (${exerciseIds[0]}, 2, 'Lower your body towards the floor by bending your elbows.'),
+      (${exerciseIds[0]}, 3, 'Push through your palms to return to the starting position.'),
+      (${exerciseIds[1]}, 1, 'Stand with your feet shoulder-width apart, arms at your sides.'),
+      (${exerciseIds[1]}, 2, 'Lower your body into a squat position by bending your knees and hips.'),
+      (${exerciseIds[1]}, 3, 'Push through your heels to return to the starting position.'),
+      (${exerciseIds[2]}, 1, 'Maintain a comfortable pace that allows you to converse without gasping for air.'),
+      (${exerciseIds[3]}, 1, 'Stand with feet hip-width apart, the barbell on the floor in front of you.'),
+      (${exerciseIds[3]}, 2, 'Hinge at your hips and knees to grip the barbell, maintaining a flat back.'),
+      (${exerciseIds[3]}, 3, 'Lift the barbell by extending your hips and knees, keeping the bar close to your body.'),
+      (${exerciseIds[3]}, 4, 'Lower the barbell to the ground with control, reversing the movement.'),
+      (${exerciseIds[4]}, 1, 'Lie on a bench with your feet flat on the floor, holding the barbell slightly wider than shoulder-width.'),
+      (${exerciseIds[4]}, 2, 'Lower the barbell to your chest, keeping your elbows slightly tucked.'),
+      (${exerciseIds[4]}, 3, 'Press the barbell back up, extending your arms fully.'),
+      (${exerciseIds[5]}, 1, 'Grab a pull-up bar with an overhand grip, hands slightly wider than shoulder-width apart.'),
+      (${exerciseIds[5]}, 2, 'Hang from the bar with arms fully extended. Pull yourself up until your chin clears the bar.'),
+      (${exerciseIds[5]}, 3, 'Lower yourself down slowly until your arms are fully extended again.'),
+      (${exerciseIds[6]}, 1, 'Get into a push-up position, resting on your forearms instead of your hands.'),
+      (${exerciseIds[6]}, 2, 'Engage your core and maintain a straight line from head to heels.'),
+      (${exerciseIds[6]}, 3, 'Hold this position for the desired duration.'),
+      (${exerciseIds[7]}, 1, 'Stand with feet shoulder-width apart and arms by your sides.'),
+      (${exerciseIds[7]}, 2, 'Squat down, placing your hands on the floor in front of you.'),
+      (${exerciseIds[7]}, 3, 'Kick your feet back into a plank position.'),
+      (${exerciseIds[7]}, 4, 'Do a push-up.'),
+      (${exerciseIds[7]}, 5, 'Quickly return your feet to the squat position.'),
+      (${exerciseIds[7]}, 6, 'Jump explosively into the air.'),
+      (${exerciseIds[8]}, 1, 'Stand with your feet together.'),
+      (${exerciseIds[8]}, 2, 'Take a step forward with your right leg and lower your body until your right thigh is parallel to the floor and your right knee is directly above your ankle.'),
+      (${exerciseIds[8]}, 3, 'Push off with your right foot to return to the starting position.'),
+      (${exerciseIds[8]}, 4, 'Repeat on the other side.'),
+      (${exerciseIds[9]}, 1, 'Stand with feet shoulder-width apart, holding a dumbbell in each hand with palms facing forward.'),
+      (${exerciseIds[9]}, 2, 'Curl the dumbbells upward, keeping your elbows close to your sides.'),
+      (${exerciseIds[9]}, 3, 'Slowly lower the dumbbells back to the starting position.'),
+      (${exerciseIds[10]}, 1, 'Place your hands shoulder-width apart on a bench or sturdy surface behind you.'),
+      (${exerciseIds[10]}, 2, 'Extend your legs out in front of you, resting on your heels.'),
+      (${exerciseIds[10]}, 3, 'Lower your body by bending your elbows until they reach a 90-degree angle.'),
+      (${exerciseIds[10]}, 4, 'Push back up to the starting position.'),
+      (${exerciseIds[11]}, 1, 'Hold the jump rope handles, keeping your elbows close to your body.'),
+      (${exerciseIds[11]}, 2, 'Rotate your wrists to swing the rope over your head.'),
+      (${exerciseIds[11]}, 3, 'Hop over the rope as it passes your feet.'),
+      (${exerciseIds[12]}, 1, 'Stand with your feet shoulder-width apart, holding a barbell across your upper back with an overhand grip.'),
+      (${exerciseIds[12]}, 2, 'Keeping your core engaged, press the barbell straight up over your head until your arms are fully extended.'),
+      (${exerciseIds[12]}, 3, 'Lower the barbell back to the starting position with control.'),
+      (${exerciseIds[13]}, 1, 'Adjust the seat and weight on the leg press machine.'),
+      (${exerciseIds[13]}, 2, 'Place your feet shoulder-width apart on the platform.'),
+      (${exerciseIds[13]}, 3, 'Push the platform away from you by extending your legs.'),
+      (${exerciseIds[13]}, 4, 'Slowly lower the platform back down until your knees are slightly bent.'),
+      (${exerciseIds[14]}, 1, 'Start in a high plank position with your hands shoulder-width apart.'),
+      (${exerciseIds[14]}, 2, 'Bring one knee towards your chest, then quickly alternate, bringing the other knee in.'),
+      (${exerciseIds[14]}, 3, 'Maintain a fast pace, as if running in place.');
+  `;
+
     await client.query(exerciseInstructionsQuery);
 
-    // Insert Programme Exercises
+    // Insert Programme Exercises (Associating exercises with programmes)
     const programmeExercisesQuery = `
-      INSERT INTO programme_exercises (programme_id, exercise_id, reps, sets)
-      VALUES
-        (${programmeIds[0]}, ${exerciseIds[0]}, 10, 3),
-        (${programmeIds[0]}, ${exerciseIds[2]}, 30, 2),
-        (${programmeIds[1]}, ${exerciseIds[1]}, 15, 4),
-        (${programmeIds[1]}, ${exerciseIds[4]}, 12, 3),
-        (${programmeIds[2]}, ${exerciseIds[2]}, 20, 3),
-        (${programmeIds[2]}, ${exerciseIds[6]}, 60, 1),
-        (${programmeIds[3]}, ${exerciseIds[3]}, 10, 3),
-        (${programmeIds[3]}, ${exerciseIds[5]}, 8, 4),
-        (${programmeIds[4]}, ${exerciseIds[7]}, 10, 3),
-        (${programmeIds[4]}, ${exerciseIds[8]}, 10, 3),
-        (${programmeIds[5]}, ${exerciseIds[6]}, 120, 3),
-        (${programmeIds[5]}, ${exerciseIds[11]}, 60, 5),
-        (${programmeIds[6]}, ${exerciseIds[3]}, 15, 3),
-        (${programmeIds[6]}, ${exerciseIds[4]}, 10, 3),
-        (${programmeIds[7]}, ${exerciseIds[8]}, 12, 3),
-        (${programmeIds[7]}, ${exerciseIds[10]}, 15, 3),
-        (${programmeIds[8]}, ${exerciseIds[2]}, 20, 3),
-        (${programmeIds[8]}, ${exerciseIds[9]}, 15, 3),
-        (${programmeIds[9]}, ${exerciseIds[6]}, 60, 3),
-        (${programmeIds[9]}, ${exerciseIds[3]}, 12, 3)
+    INSERT INTO programme_exercises (programme_id, exercise_id, reps, sets)
+    VALUES
+      (${programmeIds[0]}, ${exerciseIds[0]}, 15, 3),
+      (${programmeIds[0]}, ${exerciseIds[1]}, 20, 3), 
+      (${programmeIds[0]}, ${exerciseIds[2]}, 30, 1),
+      (${programmeIds[1]}, ${exerciseIds[3]}, 8, 4),
+      (${programmeIds[1]}, ${exerciseIds[4]}, 10, 4),
+      (${programmeIds[1]}, ${exerciseIds[9]}, 12, 3),
+      (${programmeIds[2]}, ${exerciseIds[2]}, 45, 1),
+      (${programmeIds[2]}, ${exerciseIds[11]}, 60, 1),
+      (${programmeIds[2]}, ${exerciseIds[14]}, 20, 3),
+      (${programmeIds[3]}, ${exerciseIds[3]}, 5, 5),
+      (${programmeIds[3]}, ${exerciseIds[12]}, 10, 4),
+      (${programmeIds[3]}, ${exerciseIds[4]}, 5, 5),
+      (${programmeIds[4]}, ${exerciseIds[7]}, 15, 3),
+      (${programmeIds[4]}, ${exerciseIds[0]}, 10, 3),
+      (${programmeIds[4]}, ${exerciseIds[14]}, 20, 2),
+      (${programmeIds[5]}, ${exerciseIds[6]}, 60, 1),
+      (${programmeIds[5]}, ${exerciseIds[13]}, 20, 3),
+      (${programmeIds[5]}, ${exerciseIds[8]}, 12, 2),
+      (${programmeIds[6]}, ${exerciseIds[3]}, 10, 3),
+      (${programmeIds[6]}, ${exerciseIds[7]}, 12, 4),
+      (${programmeIds[6]}, ${exerciseIds[1]}, 15, 4),
+      (${programmeIds[7]}, ${exerciseIds[13]}, 15, 3),
+      (${programmeIds[7]}, ${exerciseIds[8]}, 10, 3),
+      (${programmeIds[7]}, ${exerciseIds[6]}, 60, 2),
+      (${programmeIds[8]}, ${exerciseIds[2]}, 60, 1),
+      (${programmeIds[8]}, ${exerciseIds[14]}, 30, 2),
+      (${programmeIds[8]}, ${exerciseIds[11]}, 100, 1),
+      (${programmeIds[9]}, ${exerciseIds[6]}, 30, 1),
+      (${programmeIds[9]}, ${exerciseIds[14]}, 15, 3),
+      (${programmeIds[9]}, ${exerciseIds[8]}, 20, 3);
     `;
+
     await client.query(programmeExercisesQuery);
 
     // Insert User Programmes
     const userProgrammesQuery = `
-      INSERT INTO user_programmes (user_id, programme_id, start_date, status, active_days)
-      VALUES
-        (${userIds[0]}, ${programmeIds[0]}, '2024-06-01', 'active', 'monday,wednesday,friday'),
-        (${userIds[1]}, ${programmeIds[1]}, '2024-06-01', 'active', 'tuesday,thursday'),
-        (${userIds[2]}, ${programmeIds[2]}, '2024-06-01', 'active', 'monday,thursday,saturday'),
-        (${userIds[3]}, ${programmeIds[3]}, '2024-06-01', 'active', 'wednesday,friday,sunday'),
-        (${userIds[4]}, ${programmeIds[4]}, '2024-06-01', 'active', 'monday,friday,saturday'),
-        (${userIds[5]}, ${programmeIds[5]}, '2024-06-01', 'active', 'tuesday,thursday,sunday'),
-        (${userIds[6]}, ${programmeIds[6]}, '2024-06-01', 'active', 'wednesday,friday')
-      RETURNING id;
-    `;
+    INSERT INTO user_programmes (user_id, programme_id, start_date, status, active_days)
+    VALUES
+      (${userIds[0]}, ${programmeIds[0]}, '2024-06-01', 'active', 'monday,wednesday,friday'),
+      (${userIds[1]}, ${programmeIds[1]}, '2024-06-01', 'active', 'tuesday,thursday'),
+      (${userIds[2]}, ${programmeIds[2]}, '2024-06-01', 'active', 'monday,thursday,saturday'),
+      (${userIds[3]}, ${programmeIds[3]}, '2024-06-01', 'active', 'wednesday,friday,sunday'),
+      (${userIds[4]}, ${programmeIds[4]}, '2024-06-01', 'active', 'monday,friday,saturday'),
+      (${userIds[5]}, ${programmeIds[5]}, '2024-06-01', 'active', 'tuesday,thursday,sunday'),
+      (${userIds[6]}, ${programmeIds[6]}, '2024-06-01', 'active', 'wednesday,friday')
+    RETURNING id;
+  `;
     const userProgrammesResult = await client.query(userProgrammesQuery);
     const userProgrammeIds = userProgrammesResult.rows.map((row) => row.id);
 
     // Insert User Exercises with Goal Weight
     const userExercisesQuery = `
-      INSERT INTO user_exercises (user_programme_id, exercise_id, start_weight, goal_weight, start_reps, goal_reps)
-      VALUES
-        (${userProgrammeIds[0]}, ${exerciseIds[0]}, 20, 50, 8, 12),
-        (${userProgrammeIds[0]}, ${exerciseIds[2]}, NULL, NULL, NULL, NULL),
-        (${userProgrammeIds[1]}, ${exerciseIds[3]}, 50, 100, 5, 8),
-        (${userProgrammeIds[1]}, ${exerciseIds[4]}, 40, 80, 8, 12),
-        (${userProgrammeIds[2]}, ${exerciseIds[2]}, NULL, NULL, NULL, NULL),
-        (${userProgrammeIds[2]}, ${exerciseIds[6]}, NULL, NULL, 30, 60),
-        (${userProgrammeIds[3]}, ${exerciseIds[3]}, 60, 120, 5, 8),
-        (${userProgrammeIds[3]}, ${exerciseIds[5]}, 30, 70, 3, 6),
-        (${userProgrammeIds[4]}, ${exerciseIds[7]}, NULL, NULL, 10, 20),
-        (${userProgrammeIds[4]}, ${exerciseIds[8]}, 20, 50, 8, 12),
-        (${userProgrammeIds[5]}, ${exerciseIds[6]}, NULL, NULL, 60, 120),
-        (${userProgrammeIds[5]}, ${exerciseIds[11]}, NULL, NULL, 30, 60),
-        (${userProgrammeIds[6]}, ${exerciseIds[3]}, 50, 100, 5, 10),
-        (${userProgrammeIds[6]}, ${exerciseIds[4]}, 40, 80, 8, 12)
-      RETURNING id;
-    `;
+    INSERT INTO user_exercises (user_programme_id, exercise_id, start_weight, goal_weight, start_reps, goal_reps)
+    VALUES
+      (${userProgrammeIds[0]}, ${exerciseIds[0]}, NULL, NULL, 8, 12),
+      (${userProgrammeIds[0]}, ${exerciseIds[2]}, NULL, NULL, NULL, NULL),
+      (${userProgrammeIds[1]}, ${exerciseIds[3]}, 50, 100, 5, 8),
+      (${userProgrammeIds[1]}, ${exerciseIds[4]}, 40, 80, 8, 12),
+      (${userProgrammeIds[2]}, ${exerciseIds[2]}, NULL, NULL, NULL, NULL),
+      (${userProgrammeIds[2]}, ${exerciseIds[6]}, NULL, NULL, 30, 60),
+      (${userProgrammeIds[3]}, ${exerciseIds[3]}, 60, 120, 5, 8),
+      (${userProgrammeIds[3]}, ${exerciseIds[5]}, 30, 70, 3, 6),
+      (${userProgrammeIds[4]}, ${exerciseIds[7]}, NULL, NULL, 10, 20),
+      (${userProgrammeIds[4]}, ${exerciseIds[8]}, 20, 50, 8, 12),
+      (${userProgrammeIds[5]}, ${exerciseIds[6]}, NULL, NULL, 60, 120),
+      (${userProgrammeIds[5]}, ${exerciseIds[11]}, NULL, NULL, 30, 60),
+      (${userProgrammeIds[6]}, ${exerciseIds[3]}, 50, 100, 5, 10),
+      (${userProgrammeIds[6]}, ${exerciseIds[4]}, 40, 80, 8, 12)
+    RETURNING id;
+  `;
     const userExercisesResult = await client.query(userExercisesQuery);
     const userExerciseIds = userExercisesResult.rows.map((row) => row.id);
 
     // Insert Exercise Records with Reps and Sets Completed
     const exerciseRecordsQuery = `
-      INSERT INTO exercise_records (user_exercise_id, weight, reps_completed, sets_completed)
-      VALUES
-        (${userExerciseIds[0]}, 20, 10, 3),
-        (${userExerciseIds[1]}, NULL, 30, 2),
-        (${userExerciseIds[2]}, 50, 10, 3),
-        (${userExerciseIds[3]}, 40, 12, 3),
-        (${userExerciseIds[4]}, NULL, 20, 3),
-        (${userExerciseIds[5]}, NULL, 60, 1),
-        (${userExerciseIds[6]}, 60, 10, 3),
-        (${userExerciseIds[7]}, 30, 8, 4),
-        (${userExerciseIds[8]}, NULL, 10, 3),
-        (${userExerciseIds[9]}, 20, 10, 3),
-        (${userExerciseIds[10]}, NULL, 60, 3),
-        (${userExerciseIds[11]}, NULL, 30, 5),
-        (${userExerciseIds[12]}, 50, 10, 3),
-        (${userExerciseIds[13]}, 40, 12, 3)
-    `;
+    INSERT INTO exercise_records (user_exercise_id, weight, reps_completed, sets_completed)
+    VALUES
+      (${userExerciseIds[0]}, NULL, 10, 3),
+      (${userExerciseIds[1]}, NULL, 30, 2),
+      (${userExerciseIds[2]}, 50, 10, 3),
+      (${userExerciseIds[3]}, 40, 12, 3),
+      (${userExerciseIds[4]}, NULL, 20, 3),
+      (${userExerciseIds[5]}, NULL, 60, 1),
+      (${userExerciseIds[6]}, 60, 10, 3),
+      (${userExerciseIds[7]}, 30, 8, 4),
+      (${userExerciseIds[8]}, NULL, 10, 3),
+      (${userExerciseIds[9]}, 20, 10, 3),
+      (${userExerciseIds[10]}, NULL, 60, 3),
+      (${userExerciseIds[11]}, NULL, 30, 5),
+      (${userExerciseIds[12]}, 50, 10, 3),
+      (${userExerciseIds[13]}, 40, 12, 3)
+    RETURNING id;
+  `;
     await client.query(exerciseRecordsQuery);
 
-    console.log("Database seeded successfully!");
-  } catch (error) {
-    console.error("Error seeding database:", error);
+    console.log(
+      "User programmes, exercises, and exercise records have been inserted successfully!"
+    );
+  } catch (err) {
+    console.error("Error inserting user data:", err.stack);
   } finally {
     await client.end();
-    console.log("Disconnected from the database");
+    console.log("Disconnected from the database.");
   }
 };
 
