@@ -112,20 +112,68 @@ const seedDatabase = async () => {
     const exercisesQuery = `
       INSERT INTO exercises (name, category, description, is_weighted, image_url, video_url)
       VALUES
-        ('Push Up', 'arms', 'An exercise to strengthen arms', false, 'https://example.com/pushup.jpg', 'https://example.com/pushup.mp4'),
-        ('Squat', 'legs', 'An exercise to strengthen legs', true, 'https://example.com/squat.jpg', 'https://example.com/squat.mp4'),
-        ('Running', 'cardio', 'A cardiovascular exercise to improve endurance', false, 'https://example.com/running.jpg', 'https://example.com/running.mp4'),
-        ('Deadlift', 'full body', 'A full body exercise to build strength', true, 'https://example.com/deadlift.jpg', 'https://example.com/deadlift.mp4'),
-        ('Bench Press', 'chest', 'An exercise to strengthen the chest', true, 'https://example.com/benchpress.jpg', 'https://example.com/benchpress.mp4'),
-        ('Pull Up', 'back', 'An exercise to strengthen the back', true, 'https://example.com/pullup.jpg', 'https://example.com/pullup.mp4'),
-        ('Plank', 'core', 'An exercise to strengthen the core', false, 'https://example.com/plank.jpg', 'https://example.com/plank.mp4'),
-        ('Burpees', 'full body', 'A full body exercise to build endurance', false, 'https://example.com/burpees.jpg', 'https://example.com/burpees.mp4'),
-        ('Lunges', 'legs', 'An exercise to strengthen legs', true, 'https://example.com/lunges.jpg', 'https://example.com/lunges.mp4'),
-        ('Bicep Curl', 'arms', 'An exercise to strengthen biceps', true, 'https://example.com/bicepcurl.jpg', 'https://example.com/bicepcurl.mp4'),
-        ('Tricep Dip', 'arms', 'An exercise to strengthen triceps', false, 'https://example.com/tricepdip.jpg', 'https://example.com/tricepdip.mp4'),
-        ('Jump Rope', 'cardio', 'A cardiovascular exercise to improve endurance', false, 'https://example.com/jumprope.jpg', 'https://example.com/jumprope.mp4')
+        ('Push Up', 'arms', 'A bodyweight exercise targeting the chest, shoulders, and triceps.', false, 
+        'https://cdn.pixabay.com/photo/2017/08/30/12/45/push-up-2696030_1280.jpg', 
+        'https://www.youtube.com/watch?v=_l3ySVKYVJ8'),
+        
+        ('Squat', 'legs', 'A foundational lower body exercise to build strength in the quads, hamstrings, and glutes.', true, 
+        'https://cdn.pixabay.com/photo/2016/03/26/22/40/squat-1284619_1280.jpg', 
+        'https://www.youtube.com/watch?v=aclHkVaku9U'),
+
+        ('Running', 'cardio', 'An aerobic exercise that enhances cardiovascular endurance and burns calories.', false, 
+        'https://cdn.pixabay.com/photo/2015/01/20/13/13/sunset-605305_1280.jpg', 
+        'https://www.youtube.com/watch?v=6U6hX7ei5eM'),
+
+        ('Deadlift', 'full body', 'A compound movement that targets the posterior chain, improving overall body strength.', true, 
+        'https://cdn.pixabay.com/photo/2017/04/07/09/23/deadlift-2210482_1280.jpg', 
+        'https://www.youtube.com/watch?v=op9kVnSso6Q'),
+
+        ('Bench Press', 'chest', 'A key upper body exercise to develop strength in the chest, shoulders, and triceps.', true, 
+        'https://cdn.pixabay.com/photo/2017/08/02/16/09/barbell-2572178_1280.jpg', 
+        'https://www.youtube.com/watch?v=gRVjAtPip0Y'),
+
+        ('Pull Up', 'back', 'A challenging bodyweight exercise that strengthens the lats, biceps, and upper back.', true, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/pull-up-1284619_1280.jpg', 
+        'https://www.youtube.com/watch?v=eGo4IYlbE5g'),
+
+        ('Plank', 'core', 'A core stabilization exercise that engages the abs, back, and shoulders.', false, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/plank-1284625_1280.jpg', 
+        'https://www.youtube.com/watch?v=B296mZDhrP4'),
+
+        ('Burpees', 'full body', 'A high-intensity full-body exercise combining strength and cardio to boost endurance.', false, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/burpees-1284624_1280.jpg', 
+        'https://www.youtube.com/watch?v=TU8QYVW0gDU'),
+
+        ('Lunges', 'legs', 'A dynamic leg exercise that targets the quads, hamstrings, and glutes, improving balance and coordination.', true, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/lunges-1284622_1280.jpg', 
+        'https://www.youtube.com/watch?v=QOVaHwm-Q6U'),
+
+        ('Bicep Curl', 'arms', 'An isolated arm exercise focused on building the bicep muscles.', true, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/bicep-curl-1284620_1280.jpg', 
+        'https://www.youtube.com/watch?v=ykJmrZ5v0Oo'),
+
+        ('Tricep Dip', 'arms', 'A tricep-focused exercise that also engages the chest and shoulders.', false, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/tricep-dip-1284621_1280.jpg', 
+        'https://www.youtube.com/watch?v=0326dy_-CzM'),
+
+        ('Jump Rope', 'cardio', 'A simple yet effective cardio exercise that improves coordination and endurance.', false, 
+        'https://cdn.pixabay.com/photo/2017/05/17/12/42/fitness-2317180_1280.jpg', 
+        'https://www.youtube.com/watch?v=fcN37TxBE_s'),
+
+        ('Overhead Press', 'shoulders', 'A compound exercise that builds shoulder strength and stability.', true, 
+        'https://cdn.pixabay.com/photo/2017/01/31/20/44/overhead-press-2022627_1280.jpg', 
+        'https://www.youtube.com/watch?v=F3QY5vMz_6I'),
+
+        ('Leg Press', 'legs', 'A machine-based exercise that strengthens the quadriceps, hamstrings, and glutes.', true, 
+        'https://cdn.pixabay.com/photo/2016/03/27/19/48/leg-press-1284618_1280.jpg', 
+        'https://www.youtube.com/watch?v=lUEqJGWXUJ8'),
+
+        ('Mountain Climbers', 'core', 'A dynamic core exercise that also boosts cardiovascular endurance.', false, 
+        'https://cdn.pixabay.com/photo/2017/02/08/19/22/mountain-climbers-2042203_1280.jpg', 
+        'https://www.youtube.com/watch?v=nmwgirgXLYM')
       RETURNING id;
     `;
+
     const exercisesResult = await client.query(exercisesQuery);
     const exerciseIds = exercisesResult.rows.map((row) => row.id);
     // Insert Exercise Instructions
