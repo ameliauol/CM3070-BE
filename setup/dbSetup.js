@@ -17,9 +17,14 @@ client.query(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
+    difficulty_level VARCHAR(50) NOT NULL DEFAULT 'Beginner',    
+    est_duration INTEGER NOT NULL DEFAULT 60,
+    image_url VARCHAR(255),
     author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_difficulty_level CHECK (difficulty_level IN ('Beginner', 'Intermediate', 'Advanced')),
+    CONSTRAINT chk_est_duration CHECK (est_duration > 0 AND est_duration < 300)
   );
 
   CREATE TABLE IF NOT EXISTS exercises (
@@ -86,7 +91,6 @@ client.query(
     sets_completed INTEGER NOT NULL DEFAULT 1,
     date_achieved TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
-
 `,
   (err, res) => {
     if (err) {
