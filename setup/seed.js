@@ -53,16 +53,16 @@ const seedDatabase = async () => {
     const programmesQuery = `
       INSERT INTO programmes (name, description, difficulty_level, est_duration, image_url)
       VALUES
-        ('Beginner Strength Training', 'A basic strength training program for beginners focusing on major muscle groups.', 'Beginner', 30, 'https://example.com/images/beginner_strength.jpg'),
-        ('Intermediate Cardio Workout', 'A balanced cardio workout program for intermediate fitness levels.', 'Intermediate', 45, 'https://example.com/images/intermediate_cardio.jpg'),
-        ('Advanced Flexibility Routine', 'An advanced routine designed to enhance flexibility and mobility.', 'Advanced', 60, 'https://example.com/images/advanced_flexibility.jpg'),
-        ('High-Intensity Interval Training', 'A high-intensity workout combining cardio and strength exercises for a full-body challenge.', 'Advanced', 75, 'https://example.com/images/hiit.jpg'),
-        ('Core Strength Program', 'Focused core strengthening exercises to build a solid foundation.', 'Intermediate', 40, 'https://example.com/images/core_strength.jpg'),
-        ('Yoga for Relaxation', 'A yoga program designed to promote relaxation and flexibility.', 'Beginner', 30, 'https://example.com/images/yoga_relaxation.jpg'),
-        ('Full Body Strength Circuit', 'A full-body circuit workout for overall strength and conditioning.', 'Intermediate', 60, 'https://example.com/images/full_body_strength.jpg'),
-        ('Endurance Running Program', 'A progressive running program aimed at improving endurance.', 'Advanced', 90, 'https://example.com/images/endurance_running.jpg'),
-        ('Pilates for Core Stability', 'Pilates exercises focusing on core stability and strength.', 'Beginner', 50, 'https://example.com/images/pilates_core.jpg'),
-        ('Strength Training for Athletes', 'Advanced strength training program tailored for athletes.', 'Advanced', 60, 'https://example.com/images/athlete_strength.jpg')
+        ('Beginner Strength Training', 'A basic strength training program for beginners focusing on major muscle groups.', 'beginner', 30, 'https://example.com/images/beginner_strength.jpg'),
+        ('Intermediate Cardio Workout', 'A balanced cardio workout program for intermediate fitness levels.', 'intermediate', 45, 'https://example.com/images/intermediate_cardio.jpg'),
+        ('Advanced Flexibility Routine', 'An advanced routine designed to enhance flexibility and mobility.', 'advanced', 60, 'https://example.com/images/advanced_flexibility.jpg'),
+        ('High-Intensity Interval Training', 'A high-intensity workout combining cardio and strength exercises for a full-body challenge.', 'advanced', 75, 'https://example.com/images/hiit.jpg'),
+        ('Core Strength Program', 'Focused core strengthening exercises to build a solid foundation.', 'intermediate', 40, 'https://example.com/images/core_strength.jpg'),
+        ('Yoga for Relaxation', 'A yoga program designed to promote relaxation and flexibility.', 'beginner', 30, 'https://example.com/images/yoga_relaxation.jpg'),
+        ('Full Body Strength Circuit', 'A full-body circuit workout for overall strength and conditioning.', 'intermediate', 60, 'https://example.com/images/full_body_strength.jpg'),
+        ('Endurance Running Program', 'A progressive running program aimed at improving endurance.', 'advanced', 90, 'https://example.com/images/endurance_running.jpg'),
+        ('Pilates for Core Stability', 'Pilates exercises focusing on core stability and strength.', 'beginner', 50, 'https://example.com/images/pilates_core.jpg'),
+        ('Strength Training for Athletes', 'advanced strength training program tailored for athletes.', 'advanced', 60, 'https://example.com/images/athlete_strength.jpg')
       RETURNING id;
     `;
     const programmesResult = await client.query(programmesQuery);

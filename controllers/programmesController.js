@@ -82,9 +82,6 @@ exports.createProgramme = async (req, res) => {
       error_code: "INVALID_DIFFICULTY_LEVEL",
     });
   }
-  difficulty_level =
-    difficulty_level.charAt(0).toUpperCase() + difficulty_level.slice(1);
-
   // Validate estimated duration
   const parsedEstDuration = parseInt(est_duration, 10);
   if (

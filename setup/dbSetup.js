@@ -23,7 +23,7 @@ client.query(
     author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_difficulty_level CHECK (difficulty_level IN ('Beginner', 'Intermediate', 'Advanced')),
+    CONSTRAINT chk_difficulty_level CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')),
     CONSTRAINT chk_est_duration CHECK (est_duration > 0 AND est_duration < 300)
   );
 
