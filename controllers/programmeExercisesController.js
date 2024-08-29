@@ -5,7 +5,12 @@ exports.getAllExercisesOfProgrammeId = async (req, res) => {
   const programmeId = req.params.id;
   try {
     const exercises = await client.query(
-      "SELECT * FROM programme_exercises WHERE programme_id = $1",
+      `
+      SELECT pe.*, e.name AS exercise_name 
+      FROM programme_exercises pe
+      JOIN exercises e ON pe.exercise_id = e.id
+      WHERE pe.programme_id = $1
+      `,
       [programmeId]
     );
     res.json(exercises.rows);
