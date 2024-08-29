@@ -11,6 +11,23 @@ exports.getAllExercises = async (req, res) => {
   }
 };
 
+exports.getExerciseFromId = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const exercises = await client.query(
+      "SELECT * FROM exercises WHERE id = $1",
+      [id]
+    );
+    if (exercises.rows.length === 0) {
+      return res.status(404).json({ error: "Exercise not found" });
+    }
+    res.json(exercises.rows);
+  } catch (error) {
+    console.error("Error fetching exercises:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // Create a new exercise
 exports.createExercise = async (req, res) => {
   const { name, category, description, is_weighted, image_url, video_url } =

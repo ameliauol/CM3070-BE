@@ -5,6 +5,7 @@ const { authenticateToken, isAdmin } = require("../middleware/authMiddleware");
 
 // Routes related to exercises
 router.get("/get/all", exercisesController.getAllExercises);
+router.get("/get/id/:id", exercisesController.getExerciseFromId);
 router.post(
   "/create",
   authenticateToken,
