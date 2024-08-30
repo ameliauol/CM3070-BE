@@ -53,16 +53,16 @@ const seedDatabase = async () => {
     const programmesQuery = `
       INSERT INTO programmes (name, description, difficulty_level, est_duration, image_url)
       VALUES
-        ('Beginner Strength Training', 'A basic strength training program for beginners focusing on major muscle groups.', 'beginner', 30, 'https://example.com/images/beginner_strength.jpg'),
-        ('Intermediate Cardio Workout', 'A balanced cardio workout program for intermediate fitness levels.', 'intermediate', 45, 'https://example.com/images/intermediate_cardio.jpg'),
-        ('Advanced Flexibility Routine', 'An advanced routine designed to enhance flexibility and mobility.', 'advanced', 60, 'https://example.com/images/advanced_flexibility.jpg'),
-        ('High-Intensity Interval Training', 'A high-intensity workout combining cardio and strength exercises for a full-body challenge.', 'advanced', 75, 'https://example.com/images/hiit.jpg'),
-        ('Core Strength Program', 'Focused core strengthening exercises to build a solid foundation.', 'intermediate', 40, 'https://example.com/images/core_strength.jpg'),
-        ('Yoga for Relaxation', 'A yoga program designed to promote relaxation and flexibility.', 'beginner', 30, 'https://example.com/images/yoga_relaxation.jpg'),
-        ('Full Body Strength Circuit', 'A full-body circuit workout for overall strength and conditioning.', 'intermediate', 60, 'https://example.com/images/full_body_strength.jpg'),
-        ('Endurance Running Program', 'A progressive running program aimed at improving endurance.', 'advanced', 90, 'https://example.com/images/endurance_running.jpg'),
-        ('Pilates for Core Stability', 'Pilates exercises focusing on core stability and strength.', 'beginner', 50, 'https://example.com/images/pilates_core.jpg'),
-        ('Strength Training for Athletes', 'advanced strength training program tailored for athletes.', 'advanced', 60, 'https://example.com/images/athlete_strength.jpg')
+        ('Beginner Strength Training', 'A basic strength training program for beginners focusing on major muscle groups.', 'beginner', 30, 'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'),
+        ('Intermediate Cardio Workout', 'A balanced cardio workout program for intermediate fitness levels.', 'intermediate', 45, 'https://images.unsplash.com/photo-1605296867304-46d5465a13f1'),
+        ('Advanced Flexibility Routine', 'An advanced routine designed to enhance flexibility and mobility.', 'advanced', 60, 'https://plus.unsplash.com/premium_photo-1664300684959-d75f1ef199c1?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZmxleGliaWxpdHl8ZW58MHx8MHx8fDA%3D'),
+        ('High-Intensity Interval Training', 'A high-intensity workout combining cardio and strength exercises for a full-body challenge.', 'advanced', 75, 'https://unsplash.com/photos/caucasian-active-handsome-sportsman-working-out-in-fitness-gym-club-attractive-athlete-male-exercise-using-battle-rope-to-lose-weight-and-maintain-muscle-for-health-care-lifestyle-in-fitness-stadium-7DQr-fPDsMU'),
+        ('Core Strength Program', 'Focused core strengthening exercises to build a solid foundation.', 'intermediate', 40, 'https://plus.unsplash.com/premium_photo-1661281288734-49d3606234c0?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzN8fGNvcmUlMjBzdHJlbmd0aHxlbnwwfHwwfHx8MA%3D%3D'),
+        ('Yoga for Relaxation', 'A yoga program designed to promote relaxation and flexibility.', 'beginner', 30, 'https://unsplash.com/photos/woman-wearing-black-shirt-sitting-on-green-yoga-mat-GpVak9-cL6E'),
+        ('Full Body Strength Circuit', 'A full-body circuit workout for overall strength and conditioning.', 'intermediate', 60, 'https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fGZ1bGwlMjBib2R5JTIwd29ya291dHxlbnwwfHwwfHx8MA%3D%3D'),
+        ('Endurance Running Program', 'A progressive running program aimed at improving endurance.', 'advanced', 90, 'https://images.unsplash.com/photo-1560073741-24b6f111d506?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGVuZHVyYW5jZXxlbnwwfHwwfHx8MA%3D%3D'),
+        ('Pilates for Core Stability', 'Pilates exercises focusing on core stability and strength.', 'beginner', 50, 'https://plus.unsplash.com/premium_photo-1661720873706-b5a2cfcae765?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8cGlsYXRlc3xlbnwwfHwwfHx8MA%3D%3D'),
+        ('Strength Training for Athletes', 'Advanced strength training program tailored for athletes.', 'advanced', 60, 'https://plus.unsplash.com/premium_photo-1664109999741-9c559509df58?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHN0cmVuZ3RofGVufDB8fDB8fHww')
       RETURNING id;
     `;
     const programmesResult = await client.query(programmesQuery);
