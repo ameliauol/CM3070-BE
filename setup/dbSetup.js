@@ -19,6 +19,7 @@ client.query(
     description TEXT,
     difficulty_level VARCHAR(50) NOT NULL DEFAULT 'Beginner',    
     est_duration INTEGER NOT NULL DEFAULT 60,
+    popularity INTEGER DEFAULT 0,
     image_url VARCHAR(255),
     author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -126,3 +126,34 @@ exports.createProgramme = async (req, res) => {
     });
   }
 };
+
+exports.updatePopularity = async (req, res) => {
+  const programmeId = req.params.id;
+
+  try {
+    const updatedProgramme = await client.query(
+      `
+      UPDATE programmes
+      SET popularity = popularity + 1
+      WHERE id = $1
+      RETURNING *
+      `,
+      [programmeId]
+    );
+
+    if (updatedProgramme.rows.length === 0) {
+      return res.status(404).json({
+        error: "Programme not found",
+        error_code: "PROGRAMME_NOT_FOUND",
+      });
+    }
+
+    res.json(updatedProgramme.rows[0]);
+  } catch (error) {
+    console.error("Error updating popularity:", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      error_code: "SERVER_ERROR",
+    });
+  }
+};

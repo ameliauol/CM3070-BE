@@ -12,5 +12,6 @@ router.post(
   isAdmin,
   programmesController.createProgramme
 );
+router.put("/update/popularity/:id", programmesController.updatePopularity);
 
 module.exports = router;
