@@ -75,7 +75,7 @@ const seedDatabase = async () => {
         ('Push Up', 'arms', 'A bodyweight exercise targeting the chest, shoulders, and triceps.', false, 
           'https://cdn.pixabay.com/photo/2017/08/30/12/45/push-up-2696030_1280.jpg', 
           'https://www.youtube.com/embed/_l3ySVKYVJ8'),
-        ('Squat', 'legs', 'A foundational lower body exercise to build strength in the quads, hamstrings, and glutes.', true, 
+        ('Squats', 'legs', 'A foundational lower body exercise to build strength in the quads, hamstrings, and glutes. In this case, we are talking about the conventional back squat.', true, 
           'https://cdn.pixabay.com/photo/2016/03/26/22/40/squat-1284619_1280.jpg', 
           'https://www.youtube.com/embed/aclHkVaku9U'),
         ('Running', 'cardio', 'An aerobic exercise that enhances cardiovascular endurance and burns calories.', false, 
