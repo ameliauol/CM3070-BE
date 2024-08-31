@@ -7,7 +7,7 @@ const { client, connectClient } = require("./setup/db");
 
 const allowedOrigins = [
   "http://localhost:5173", // Vite local development URL
-  "https://strengthmatrix.netlify.app/", // Production frontend URL
+  "https://strengthmatrix.netlify.app", // Production frontend URL
 ];
 
 // Middleware
