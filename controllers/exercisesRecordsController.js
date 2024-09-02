@@ -253,6 +253,7 @@ const deleteExerciseRecordById = async (req, res) => {
 module.exports = {
   getAllExerciseRecordsForUserExercises,
   getAllExerciseRecordsForUserExerciseId,
+  getExerciseRecordsByUserId,
   addExerciseRecordForUserExercise,
   addExerciseRecordForProgrammeId,
   deleteExerciseRecordById,
