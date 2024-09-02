@@ -20,6 +20,11 @@ router.get(
   authenticateToken,
   exercisesRecordsController.getAllExerciseRecordsForUserExerciseId
 );
+router.get(
+  "/get/filter/programme/:id",
+  authenticateToken,
+  exercisesRecordsController.getExerciseRecordsByProgrammeIdForLoggedInUser
+);
 router.post(
   "/add/new/user-exercise/:id",
   authenticateToken,
