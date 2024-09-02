@@ -16,9 +16,14 @@ router.get(
   exercisesRecordsController.getAllExerciseRecordsForUserExerciseId
 );
 router.post(
-  "/add/new/:id",
+  "/add/new/user-exercise/:id",
   authenticateToken,
   exercisesRecordsController.addExerciseRecordForUserExercise
+);
+router.post(
+  "/add/new/programme/:programmeId",
+  authenticateToken,
+  exercisesRecordsController.addExerciseRecordForProgrammeId
 );
 router.delete(
   "/delete/:id",
