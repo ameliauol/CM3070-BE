@@ -20,6 +20,13 @@ router.get(
   authenticateToken,
   userExercisesController.getUserExercisesByUserProgrammeId
 );
+
+router.get(
+  "/get/filter/user/:user_id",
+  authenticateToken,
+  userExercisesController.getUserExercisesByUserId
+);
+
 // Logged in users add for themselves
 router.post(
   "/add/new/:id",

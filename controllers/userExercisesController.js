@@ -103,6 +103,47 @@ exports.getUserExercisesByUserProgrammeId = async (req, res) => {
   }
 };
 
+exports.getUserExercisesByUserId = async (req, res) => {
+  const userId = req.params.user_id;
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  // 1. Check if the user is authorized to access the user programme
+  if (userId !== req.user.id && !req.user.is_admin) {
+    return res.status(403).json({
+      message:
+        "Unauthorized request, you can only view user exercises for your own account or if you are an admin.",
+    });
+  }
+
+  // 2. If authorized, fetch the user exercises
+  try {
+    const { rows: userExercises } = await client.query(
+      `
+      SELECT ue.*, p.name AS programme_name
+      FROM user_exercises ue
+      JOIN user_programmes up ON ue.user_programme_id = up.id
+      JOIN programmes p ON up.programme_id = p.id
+      WHERE up.user_id = $1
+      `,
+      [userId]
+    );
+
+    if (userExercises.length === 0) {
+      return res.status(404).json({
+        message: `No user exercises found for user ID: ${userId}`,
+      });
+    }
+
+    res.status(200).json(userExercises);
+  } catch (error) {
+    console.error("Error fetching user programmes by user ID:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 // Add a new exercise data/log to a user programme
 exports.addExerciseLogToUserProgramme = async (req, res) => {
   const userProgrammeId = req.params.id;
