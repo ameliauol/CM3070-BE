@@ -21,7 +21,7 @@ router.get(
   exercisesRecordsController.getAllExerciseRecordsForUserExerciseId
 );
 router.get(
-  "/get/filter/programme/:id",
+  "/get/filter/programme/:programmeId",
   authenticateToken,
   exercisesRecordsController.getExerciseRecordsByProgrammeIdForLoggedInUser
 );
