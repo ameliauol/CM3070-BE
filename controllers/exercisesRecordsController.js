@@ -135,7 +135,7 @@ const addExerciseRecordForProgrammeId = async (req, res) => {
     // 1. Fetch the user_exercise_id for the given programmeId, exercise_id, and logged-in user
     const userExerciseResult = await client.query(
       `
-      SELECT ue.id, e.is_weighted, e.name as exercise_name
+      SELECT ue.id, e.is_weighted, e.name AS exercise_name
       FROM user_exercises ue
       JOIN exercises e ON ue.exercise_id = e.id
       WHERE ue.user_programme_id IN (SELECT id FROM user_programmes WHERE programme_id = $1 AND user_id = $2)
@@ -153,11 +153,12 @@ const addExerciseRecordForProgrammeId = async (req, res) => {
 
     const userExerciseId = userExerciseResult.rows[0].id;
     const isWeighted = userExerciseResult.rows[0].is_weighted;
+    const exerciseName = userExerciseResult.rows[0].exercise_name; // Get exercise name here
 
     // Validate weight based on is_weighted
     if (isWeighted && (weight === undefined || weight < 0)) {
       return res.status(400).json({
-        error: `Weight is required for weighted exercise (${exercise_name}).`,
+        error: `Weight is required for weighted exercise (${exerciseName}).`, // Use exerciseName
       });
     }
 
