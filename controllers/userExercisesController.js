@@ -182,6 +182,10 @@ exports.addExerciseLogToUserProgramme = async (req, res) => {
           error:
             "Start weight and goal weight are required for weighted exercises.",
         });
+      } else if (start_weight < 0 || goal_weight < 0) {
+        return res.status(400).json({
+          error: "Weights provided must be greater than or equal to 0",
+        });
       }
     } else {
       // If it's not a weighted exercise
@@ -189,6 +193,10 @@ exports.addExerciseLogToUserProgramme = async (req, res) => {
         return res.status(400).json({
           error:
             "Start reps and goal reps are required for non-weighted exercises.",
+        });
+      } else if (start_reps < 0 || goal_reps < 0) {
+        return res.status(400).json({
+          error: "Reps provided must be greater than or equal to 0",
         });
       }
     }

@@ -28,6 +28,11 @@ exports.addExerciseToProgramme = async (req, res) => {
     return res.status(400).json({
       error: "Exercise ID, sets, and reps are required.",
     });
+  } else if (sets < 0 || reps < 0) {
+    return res.status(400).json({
+      error:
+        "Reps completed and sets completed must be greater than or equal to 0",
+    });
   }
 
   try {

@@ -50,6 +50,11 @@ const addExerciseRecordForUserExercise = async (req, res) => {
     return res.status(400).json({
       error: "Reps completed and sets completed are required",
     });
+  } else if (reps_completed < 0 || sets_completed < 0) {
+    return res.status(400).json({
+      error:
+        "Reps completed and sets completed must be greater than or equal to 0",
+    });
   }
 
   try {
