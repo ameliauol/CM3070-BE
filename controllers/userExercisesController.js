@@ -227,6 +227,81 @@ exports.addExerciseLogToUserProgramme = async (req, res) => {
   }
 };
 
+exports.updateUserExerciseById = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+  const { start_weight, goal_weight, start_reps, goal_reps } = req.body;
+
+  try {
+    // 1. Check if the user is authorized to update the user exercise
+
+    const authorizationCheck = await client.query(
+      `
+      SELECT 1
+      FROM user_exercises 
+      WHERE id = $1 AND user_programme_id IN (SELECT id FROM user_programmes WHERE user_id = $2)
+      `,
+      [id, userId]
+    );
+
+    if (authorizationCheck.rows.length === 0 && !req.user.is_admin) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to update this user exercise" });
+    }
+
+    // 2. If authorized, build the update query dynamically
+    const fieldsToUpdate = [];
+    const values = [];
+    let index = 1;
+
+    if (start_weight !== undefined) {
+      fieldsToUpdate.push(`start_weight = $${index++}`);
+      values.push(start_weight);
+    }
+
+    if (goal_weight !== undefined) {
+      fieldsToUpdate.push(`goal_weight = $${index++}`);
+      values.push(goal_weight);
+    }
+
+    if (start_reps !== undefined) {
+      fieldsToUpdate.push(`start_reps = $${index++}`);
+      values.push(start_reps);
+    }
+
+    if (goal_reps !== undefined) {
+      fieldsToUpdate.push(`goal_reps = $${index++}`);
+      values.push(goal_reps);
+    }
+
+    // 3. If there are fields to update, execute the query
+    if (fieldsToUpdate.length > 0) {
+      values.push(id); // Add the exercise ID as the last parameter
+
+      const updateQuery = `
+        UPDATE user_exercises 
+        SET ${fieldsToUpdate.join(", ")}
+        WHERE id = $${index}
+        RETURNING *
+      `;
+
+      const updatedUserExercise = await client.query(updateQuery, values);
+
+      if (updatedUserExercise.rows.length === 0) {
+        return res.status(404).json({ error: "User exercise not found" });
+      }
+
+      res.status(200).json(updatedUserExercise.rows[0]);
+    } else {
+      return res.status(400).json({ error: "No fields provided for update" });
+    }
+  } catch (error) {
+    console.error("Error updating user exercise:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // Delete a User Exercise
 exports.deleteUserExerciseById = async (req, res) => {
   const { id } = req.params;

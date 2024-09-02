@@ -33,6 +33,13 @@ router.post(
   authenticateToken,
   userExercisesController.addExerciseLogToUserProgramme
 );
+
+router.put(
+  "/update/:id",
+  authenticateToken,
+  userExercisesController.updateUserExerciseById
+);
+
 router.delete(
   "/delete/:id",
   authenticateToken,
