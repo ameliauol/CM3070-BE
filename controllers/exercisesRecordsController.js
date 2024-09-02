@@ -18,6 +18,49 @@ const getAllExerciseRecordsForUserExercises = async (req, res) => {
   }
 };
 
+const getExerciseRecordsByUserId = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    // 1. Check if the user is authorized to access the exercise records
+    if (userId !== req.user.id && !req.user.is_admin) {
+      return res.status(403).json({
+        error: "Unauthorized to access exercise records for this user.",
+      });
+    }
+
+    // 2. Fetch exercise records for the user
+    const exerciseRecordsResult = await client.query(
+      `
+      SELECT er.*, 
+             ue.start_weight, ue.goal_weight, ue.start_reps, ue.goal_reps,
+             e.name AS exercise_name, e.is_weighted, e.category AS exercise_category,
+             e.image_url AS exercise_image, 
+             p.name AS programme_name
+      FROM exercise_records er
+      JOIN user_exercises ue ON er.user_exercise_id = ue.id
+      JOIN exercises e ON ue.exercise_id = e.id
+      JOIN user_programmes up ON ue.user_programme_id = up.id
+      JOIN programmes p ON up.programme_id = p.id
+      WHERE up.user_id = $1
+      ORDER BY er.date_achieved DESC
+      `,
+      [userId]
+    );
+
+    if (exerciseRecordsResult.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No exercise records found for this user." });
+    }
+
+    res.status(200).json(exerciseRecordsResult.rows);
+  } catch (error) {
+    console.error("Error fetching exercise records:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // Fetch all exercise records for a specific user exercise
 const getAllExerciseRecordsForUserExerciseId = async (req, res) => {
   const userExerciseId = req.params.id;

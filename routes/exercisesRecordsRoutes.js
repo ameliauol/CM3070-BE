@@ -11,6 +11,11 @@ router.get(
   exercisesRecordsController.getAllExerciseRecordsForUserExercises
 );
 router.get(
+  "/get/filter/user/:id",
+  authenticateToken,
+  exercisesRecordsController.getExerciseRecordsByUserId
+);
+router.get(
   "/get/filter/user-exercise/:id",
   authenticateToken,
   exercisesRecordsController.getAllExerciseRecordsForUserExerciseId
