@@ -56,7 +56,12 @@ const getUserProgrammesByUserId = async (req, res) => {
 
   try {
     const { rows: userProgrammes } = await client.query(
-      "SELECT * FROM user_programmes WHERE user_id = $1",
+      `
+      SELECT up.*, p.*
+      FROM user_programmes up
+      JOIN programmes p ON up.programme_id = p.id
+      WHERE up.user_id = $1
+      `,
       [userId]
     );
 
