@@ -122,10 +122,11 @@ exports.getUserExercisesByUserId = async (req, res) => {
   try {
     const { rows: userExercises } = await client.query(
       `
-      SELECT ue.*, p.name AS programme_name
+      SELECT ue.*, e.name AS exercise_name, p.name AS programme_name
       FROM user_exercises ue
       JOIN user_programmes up ON ue.user_programme_id = up.id
       JOIN programmes p ON up.programme_id = p.id
+      JOIN exercises e ON ue.exercise_id = e.id
       WHERE up.user_id = $1
       `,
       [userId]
