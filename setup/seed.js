@@ -77,7 +77,7 @@ const seedDatabase = async () => {
           'https://www.youtube.com/embed/_l3ySVKYVJ8'),
         ('Squats', 'legs', 'A foundational lower body exercise to build strength in the quads, hamstrings, and glutes. In this case, we are talking about the conventional back squat.', true, 
           'https://as1.ftcdn.net/v2/jpg/06/42/54/06/1000_F_642540645_7io89t9gqtvH3UcAKN0oP1LKdwKG6JNO.jpg', 
-          'https://www.youtube.com/embed/kGESn8ArrU'),
+          'https://www.youtube.com/embed/rrJIyZGlK8c'),
         ('Running', 'cardio', 'An aerobic exercise that enhances cardiovascular endurance and burns calories.', false, 
           'https://cdn.pixabay.com/photo/2023/10/04/14/15/man-8293794_1280.jpg', 
           'https://www.youtube.com/embed/kVnyY17VS9Y'),
