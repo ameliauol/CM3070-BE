@@ -180,7 +180,7 @@ const seedDatabase = async () => {
     INSERT INTO programme_exercises (programme_id, exercise_id, reps, sets)
     VALUES
       (${programmeIds[0]}, ${exerciseIds[1]}, 15, 3),
-      (${programmeIds[0]}, ${exerciseIds[3]}, 12, 3),
+      (${programmeIds[0]}, ${exerciseIds[4]}, 12, 3),
       (${programmeIds[0]}, ${exerciseIds[3]}, 12, 3),
       (${programmeIds[1]}, ${exerciseIds[11]}, 10, 3),
       (${programmeIds[1]}, ${exerciseIds[7]}, 12, 4),
