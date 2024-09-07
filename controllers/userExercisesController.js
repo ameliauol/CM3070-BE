@@ -206,11 +206,18 @@ exports.addExerciseLogToUserProgramme = async (req, res) => {
     if (isWeighted) {
       newUserExercise = await client.query(
         `
-        INSERT INTO user_exercises (user_programme_id, exercise_id, start_weight, goal_weight) 
-        VALUES ($1, $2, $3, $4) 
+        INSERT INTO user_exercises (user_programme_id, exercise_id, start_weight, goal_weight, start_reps, goal_reps) 
+        VALUES ($1, $2, $3, $4, $5, $6) 
         RETURNING *
         `,
-        [userProgrammeId, exercise_id, start_weight, goal_weight]
+        [
+          userProgrammeId,
+          exercise_id,
+          start_weight,
+          goal_weight,
+          start_reps,
+          goal_reps,
+        ]
       );
     } else {
       newUserExercise = await client.query(
