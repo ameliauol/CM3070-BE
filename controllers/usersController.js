@@ -78,7 +78,7 @@ exports.loginUser = async (req, res) => {
         is_admin: user.rows[0].is_admin,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     res.json({ token });
