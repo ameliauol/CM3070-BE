@@ -80,7 +80,7 @@ const seedDatabase = async () => {
           'https://www.youtube.com/embed/kGESn8ArrU'),
         ('Running', 'cardio', 'An aerobic exercise that enhances cardiovascular endurance and burns calories.', false, 
           'https://cdn.pixabay.com/photo/2023/10/04/14/15/man-8293794_1280.jpg', 
-          'https://www.youtube.com/embed/6U6hX7ei5eM'),
+          'https://www.youtube.com/embed/kVnyY17VS9Y'),
         ('Deadlift', 'full body', 'A compound movement that targets the posterior chain, improving overall body strength.', true, 
           'https://as2.ftcdn.net/v2/jpg/02/00/06/59/1000_F_200065945_1pYKIsw3Vedw72QLWpSs9UxyuEucwNFo.jpg', 
           'https://www.youtube.com/embed/op9kVnSso6Q'),
